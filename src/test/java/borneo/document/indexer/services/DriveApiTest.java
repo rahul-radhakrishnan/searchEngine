@@ -1,13 +1,60 @@
 package borneo.document.indexer.services;
 
-import borneo.document.indexer.services.impl.SearchEngineImpl;
+import borneo.document.indexer.common.Constants;
+import borneo.document.indexer.common.IntegrationTest;
+import borneo.document.indexer.exceptions.ServiceException;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public class DriveApiTest {
+import java.io.File;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+public class DriveApiTest extends IntegrationTest {
 
     /**
      * Logger
      */
     private static final Logger logger = LoggerFactory.getLogger(DriveApiTest.class);
+
+    @Autowired
+    private DriveApi driveApi;
+
+    private String localPath;
+
+
+    @Before
+    public void setUp() {
+        this.localPath = System.getProperty("user.dir") + "/" + "tmp.pdf";
+    }
+
+    @Test
+    public void testSuccess() throws Exception {
+        String file = this.driveApi.download(Constants.DRIVE_PATH, this.localPath);
+        assertEquals(this.localPath, file);
+    }
+
+    @Test
+    public void testFailure() throws Exception {
+        String file = null;
+        try {
+            this.driveApi.download(Constants.INVALID_DRIVE_PATH, this.localPath);
+        } catch (ServiceException ex) {
+            logger.info("As expected");
+        }
+        assertNull(file);
+    }
+
+    @After
+    public void destroy() {
+
+        if (new File(this.localPath).exists()) {
+            new File(this.localPath).delete();
+        }
+    }
 }
