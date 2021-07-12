@@ -33,6 +33,9 @@ import java.util.concurrent.TimeUnit;
 
 import static borneo.document.indexer.constants.Constants.*;
 
+/**
+ * The concrete class for the SearchEngine. The class uses Elasticsearch for indexing and searching keywords.
+ */
 
 @Component
 public class SearchEngineImpl implements SearchEngine {
@@ -54,8 +57,17 @@ public class SearchEngineImpl implements SearchEngine {
     @Value("${elasticsearch.type}")
     private String type;
 
+    /**
+     * Elasticsearch driver object
+     */
     @Autowired
     private ElasticSearchConnector esConnector;
+
+    /**
+     * Include and exclude fields to be added in the query result
+     */
+    private final String[] includeFields = new String[]{DOCUMENT_NAME, DOCUMENT_PATH, DOCUMENT_FORMAT, DOCUMENT_URL};
+    private final String[] excludeFields = new String[]{DOCUMENT_DATA};
 
     /**
      * @param data
@@ -73,6 +85,11 @@ public class SearchEngineImpl implements SearchEngine {
         }
     }
 
+    /**
+     * @param query
+     * @return
+     * @throws ServiceException
+     */
     @Override
     public SearchResult query(SearchQuery query) throws ServiceException {
         SearchRequest searchRequest = this.createSearchRequest(query);
@@ -152,8 +169,6 @@ public class SearchEngineImpl implements SearchEngine {
 
     private SearchRequest createSearchRequest(SearchQuery query) {
         SearchRequest searchRequest = new SearchRequest(this.index);
-        String[] includeFields = new String[]{DOCUMENT_NAME, DOCUMENT_PATH, DOCUMENT_FORMAT, DOCUMENT_URL};
-        String[] excludeFields = new String[]{DOCUMENT_DATA};
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
         sourceBuilder.sort(new ScoreSortBuilder().order(SortOrder.DESC));
@@ -170,8 +185,6 @@ public class SearchEngineImpl implements SearchEngine {
      */
     private MultiSearchRequest createMultiSearchRequest(SearchMultiQuery query) {
         MultiSearchRequest multiSearchRequest = new MultiSearchRequest();
-        String[] includeFields = new String[]{DOCUMENT_NAME, DOCUMENT_PATH, DOCUMENT_FORMAT, DOCUMENT_URL};
-        String[] excludeFields = new String[]{DOCUMENT_DATA};
         for (String keyword : query.getKeywords()) {
             SearchRequest searchRequest = new SearchRequest(this.index);
             SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();

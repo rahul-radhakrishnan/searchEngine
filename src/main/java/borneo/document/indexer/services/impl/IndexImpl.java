@@ -75,7 +75,7 @@ public class IndexImpl implements Index {
     private Map<String, String> metatypeExtensionMapping;
 
     /**
-     *
+     * Construct the mapping post the bean construction.
      */
     @PostConstruct
     private void constructMetatypeExtensionMapping() {
