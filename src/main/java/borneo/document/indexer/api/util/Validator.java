@@ -4,7 +4,10 @@ import borneo.document.indexer.api.requests.SearchApiRequest;
 
 import java.util.List;
 
-public class Validators {
+/**
+ * The Controller Validator class.
+ */
+public class Validator {
 
     /**
      * @param request
@@ -24,5 +27,20 @@ public class Validators {
         if (request == null || request.getKeywords() == null || request.getKeywords().isEmpty())
             return false;
         return true;
+    }
+
+    /**
+     * Function checks the given argument is null or not
+     *
+     * @param arg1
+     *         T
+     * @return true : Given Argument is null | false: Given Argument is Not null
+     */
+    public static <T> boolean isNull(T arg1) {
+        boolean isEmpty = false;
+        if (arg1 == null) {
+            isEmpty = true;
+        }
+        return isEmpty;
     }
 }

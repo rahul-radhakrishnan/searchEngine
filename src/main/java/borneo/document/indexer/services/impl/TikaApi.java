@@ -1,5 +1,6 @@
 package borneo.document.indexer.services.impl;
 
+import borneo.document.indexer.enums.ServiceErrorType;
 import borneo.document.indexer.exceptions.ServiceException;
 import borneo.document.indexer.models.ParserData;
 import borneo.document.indexer.services.Parser;
@@ -9,21 +10,37 @@ import org.apache.tika.config.TikaConfig;
 import org.apache.tika.detect.Detector;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * The Concrete class for the Parser interface which uses Apache Tika for parsing and extracting
+ * the file data.
+ */
 
 @Component
 public class TikaApi implements Parser {
+
+
+    /**
+     * Logger
+     */
+    private static final Logger logger = LoggerFactory.getLogger(TikaApi.class);
 
     /**
      * Tika object
      */
     private Tika tika;
 
+    /**
+     *
+     */
     private final static Detector detector = TikaConfig.getDefaultConfig().getDetector();
 
     public TikaApi() {
@@ -47,12 +64,16 @@ public class TikaApi implements Parser {
             String s = StringUtils.tokenise(tika.parseToString(stream, metadata));
 
             if (!this.isSupportedFormat(metadata.get(Metadata.CONTENT_TYPE))) {
-                throw new ServiceException("Not Supported");
+                throw new ServiceException(ServiceErrorType.UNSUPPORTED_FORMAT);
             }
             data.setData(s);
             data.setType(metadata.get(Metadata.CONTENT_TYPE));
+        } catch (FileNotFoundException ex) {
+            logger.error("File not found : {}", path, ex);
+            throw new ServiceException(ServiceErrorType.INVALID_FILE_PATH);
         } catch (IOException | TikaException e) {
-            throw new ServiceException(e);
+            logger.error("Exception {}", e.getMessage());
+            throw new ServiceException(ServiceErrorType.PARSER_EXCEPTION);
         }
         return data;
     }

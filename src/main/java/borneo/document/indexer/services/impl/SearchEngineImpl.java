@@ -2,6 +2,7 @@ package borneo.document.indexer.services.impl;
 
 
 import borneo.document.indexer.elasticsearch.ElasticSearchConnector;
+import borneo.document.indexer.enums.ServiceErrorType;
 import borneo.document.indexer.exceptions.ServiceException;
 import borneo.document.indexer.models.*;
 import borneo.document.indexer.services.SearchEngine;
@@ -67,7 +68,8 @@ public class SearchEngineImpl implements SearchEngine {
             final IndexResponse response = this.esConnector.getClient().index(indexRequest, RequestOptions.DEFAULT);
             logger.info(" id created : {}", response.getId());
         } catch (Exception e) {
-            throw new ServiceException(e);
+            logger.error("Document insertion failed ", e);
+            throw new ServiceException(ServiceErrorType.INDEXING_FAILED);
         }
     }
 
@@ -90,7 +92,7 @@ public class SearchEngineImpl implements SearchEngine {
             }
 
         } catch (IOException e) {
-            throw new ServiceException(e);
+            throw new ServiceException(ServiceErrorType.SEARCH_QUERY_FAILED);
         }
         return result;
     }
@@ -170,7 +172,6 @@ public class SearchEngineImpl implements SearchEngine {
         MultiSearchRequest multiSearchRequest = new MultiSearchRequest();
         String[] includeFields = new String[]{DOCUMENT_NAME, DOCUMENT_PATH, DOCUMENT_FORMAT, DOCUMENT_URL};
         String[] excludeFields = new String[]{DOCUMENT_DATA};
-
         for (String keyword : query.getKeywords()) {
             SearchRequest searchRequest = new SearchRequest(this.index);
             SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
@@ -182,7 +183,6 @@ public class SearchEngineImpl implements SearchEngine {
             searchRequest.source(sourceBuilder);
             multiSearchRequest.add(searchRequest);
         }
-
         return multiSearchRequest;
     }
 

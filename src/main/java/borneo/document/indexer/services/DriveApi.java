@@ -6,6 +6,9 @@ import com.dropbox.core.DbxException;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * The interface for the Drive access (GDrive, DropBox etc)
+ */
 public interface DriveApi {
 
     /**

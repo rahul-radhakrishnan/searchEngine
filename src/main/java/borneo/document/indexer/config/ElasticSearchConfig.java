@@ -53,7 +53,6 @@ public class ElasticSearchConfig {
 	 */
 	@Bean(Constants.ES_CONNECTOR)
 	public ElasticSearchConnector esConnector() throws Exception {
-		System.setProperty("es.set.netty.runtime.available.processors", "false");
 		LOG.info("Cluster building started for ES ");
 		return new ElasticSearchConnector(this.host, this.port, this.userName, this.password, this.scheme);
 	}

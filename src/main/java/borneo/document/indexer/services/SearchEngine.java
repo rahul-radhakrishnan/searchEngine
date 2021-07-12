@@ -6,6 +6,9 @@ import borneo.document.indexer.models.SearchMultiQuery;
 import borneo.document.indexer.models.SearchQuery;
 import borneo.document.indexer.models.SearchResult;
 
+/**
+ * The Serach Engiune interface.
+ */
 public interface SearchEngine {
 
     /**

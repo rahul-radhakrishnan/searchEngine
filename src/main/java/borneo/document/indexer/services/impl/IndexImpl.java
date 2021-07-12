@@ -3,9 +3,10 @@ package borneo.document.indexer.services.impl;
 import borneo.document.indexer.api.responses.IndexFromDriveResponse;
 import borneo.document.indexer.api.responses.IndexFromLocalResponse;
 import borneo.document.indexer.enums.Messages;
+import borneo.document.indexer.enums.ServiceErrorType;
 import borneo.document.indexer.exceptions.ServiceException;
-import borneo.document.indexer.models.IndexDocumentDrive;
-import borneo.document.indexer.models.IndexDocumentLocal;
+import borneo.document.indexer.api.requests.IndexDocumentDrive;
+import borneo.document.indexer.api.requests.IndexDocumentLocal;
 import borneo.document.indexer.models.ParserData;
 import borneo.document.indexer.models.SearchEngineData;
 import borneo.document.indexer.services.DriveApi;
@@ -27,6 +28,9 @@ import java.util.Map;
 
 import static borneo.document.indexer.constants.Constants.*;
 
+/**
+ *
+ */
 @Component
 public class IndexImpl implements Index {
 
@@ -35,12 +39,21 @@ public class IndexImpl implements Index {
      */
     private static final Logger logger = LoggerFactory.getLogger(IndexImpl.class);
 
+    /**
+     * The Apache Tika Driver object.
+     */
     @Autowired
     private TikaApi tikaApi;
 
+    /**
+     * The Search Engine object.
+     */
     @Autowired
     private SearchEngine searchEngine;
 
+    /**
+     * The Drive Access object.
+     */
     @Autowired
     private DriveApi driveApi;
 
@@ -56,8 +69,14 @@ public class IndexImpl implements Index {
     @Value("${index.localPath}")
     private String localPath;
 
+    /**
+     * The supported format mapping
+     */
     private Map<String, String> metatypeExtensionMapping;
 
+    /**
+     *
+     */
     @PostConstruct
     private void constructMetatypeExtensionMapping() {
         this.metatypeExtensionMapping = new HashMap<>();
@@ -65,6 +84,11 @@ public class IndexImpl implements Index {
         this.metatypeExtensionMapping.put(DOCX_METATYPE, DOCX_EXTENSION);
     }
 
+    /**
+     * @param indexDocumentLocal
+     * @return
+     * @throws ServiceException
+     */
     @Override
     public IndexFromLocalResponse indexFromLocal(IndexDocumentLocal indexDocumentLocal) throws ServiceException {
         ParserData fileContents = this.tikaApi.parseStringFromFile(indexDocumentLocal.getPath());
@@ -79,6 +103,11 @@ public class IndexImpl implements Index {
         return response;
     }
 
+    /**
+     * @param indexDocumentDrive
+     * @return
+     * @throws ServiceException
+     */
     @Override
     public IndexFromDriveResponse indexFromDrive(IndexDocumentDrive indexDocumentDrive) throws ServiceException {
         try {
@@ -94,11 +123,13 @@ public class IndexImpl implements Index {
             IndexFromDriveResponse response = new IndexFromDriveResponse(indexDocumentDrive.getPath(), url,
                     Messages.INDEX_FROM_DRIVE_SUCCESS.getMessage());
             return response;
-        } catch (IOException | DbxException e) {
-            logger.error("Exception:", e);
-            throw new ServiceException(e);
+        } catch (IOException e) {
+            logger.error("Exception while downloading the drive file : {}", indexDocumentDrive.getPath(), e);
+            throw new ServiceException(ServiceErrorType.DOWNLOAD_FAILED);
+        } catch (DbxException e) {
+            logger.error("Exception while downloading the drive file : {}", indexDocumentDrive.getPath(), e);
+            throw new ServiceException(ServiceErrorType.DOWNLOAD_FAILED);
         }
-
     }
 
 }

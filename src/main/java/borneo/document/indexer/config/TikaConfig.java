@@ -10,6 +10,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 
+/**
+ *  The Tika bean creation configuration.
+ */
 @Configuration
 public class TikaConfig {
 

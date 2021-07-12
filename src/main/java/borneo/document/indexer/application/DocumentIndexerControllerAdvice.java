@@ -45,7 +45,7 @@ public class DocumentIndexerControllerAdvice {
     public ResponseEntity<ErrorResponse> serviceLayerExceptionHandler(ServiceException ex) {
         LOG.error("Code: " + ex.getErrorType().getCode() + " description :" + ex.getErrorType().getDescription());
         ErrorResponse response = new ErrorResponse(ex.getErrorType().getDescription());
-        return new ResponseEntity<ErrorResponse>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<ErrorResponse>(response, ex.getErrorType().getHttpStatus());
     }
 
     /**

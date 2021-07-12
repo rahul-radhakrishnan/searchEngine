@@ -13,6 +13,9 @@ import org.elasticsearch.transport.TransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ *  The Elasticsearch Client connection class.
+ */
 public class ElasticSearchConnector {
     /**
      * Logger

@@ -4,12 +4,15 @@ package borneo.document.indexer.api.exceptions;
 
 import org.springframework.http.HttpStatus;
 
+/**
+ * The API error type.
+ */
 public enum ApiErrorType {
 
     UNDEFINED_ERROR("000", "Undefined error", HttpStatus.INTERNAL_SERVER_ERROR),
     REQUEST_OBJECT_NULL("001", "Request Body Null", HttpStatus.BAD_REQUEST),
     INVALID_REQUEST_PARAMETERS("002", "Invalid Request Parameters", HttpStatus.BAD_REQUEST),
-    INTERNAL_SERVER_ERROR("003", "Internal Sever error", HttpStatus.INTERNAL_SERVER_ERROR);
+    INTERNAL_SERVER_ERROR("003", "Internal Server error", HttpStatus.INTERNAL_SERVER_ERROR);
 
     /**
      * Error code

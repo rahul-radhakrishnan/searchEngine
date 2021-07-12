@@ -1,5 +1,8 @@
 package borneo.document.indexer.enums;
 
+/**
+ * Service Layer static messages.
+ */
 public enum Messages {
 
 
@@ -12,7 +15,9 @@ public enum Messages {
      */
     private final String message;
 
-
+    /**
+     * @param message
+     */
     Messages(String message) {
         this.message = message;
     }
@@ -24,6 +29,9 @@ public enum Messages {
         return this.message;
     }
 
+    /**
+     * @return
+     */
     @Override
     public String toString() {
         return this.message;
