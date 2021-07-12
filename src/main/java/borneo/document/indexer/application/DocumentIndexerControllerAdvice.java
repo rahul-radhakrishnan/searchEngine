@@ -69,8 +69,9 @@ public class DocumentIndexerControllerAdvice {
      */
     @ResponseBody
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleException(Exception ex) {
+    public ResponseEntity<ErrorResponse> handleException(Exception ex) {
         LOG.error(ex.getMessage(), ex);
-        return new ResponseEntity<Object>(new Object(), HttpStatus.INTERNAL_SERVER_ERROR);
+        ErrorResponse response = new ErrorResponse("Internal Server Error");
+        return new ResponseEntity<ErrorResponse>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

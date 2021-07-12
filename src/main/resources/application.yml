@@ -1,0 +1,24 @@
+server:
+  port: 8000
+elasticsearch:
+  host: localhost
+  port: 9200
+  clusterName: indexer
+  userName:
+  password:
+  scheme: http
+  index: indexer
+  type:
+
+dropbox:
+  accesskey: sl.A0V_KRLXRz2U9_HyabeySKIqOq3vrgxoV_17UKrRcfTfmBMvl8Xw0xbGyweyjMpCcYkV4L3FTT73Y3zvgMN-LRcgF1kX1PdxJ0JEZyqCOzQdMuJvlQwW_JvTCJt4yJD37KP0yB9q
+  app: testApp
+
+cassandra:
+  username:
+  password:
+  keyspace: indexer
+
+index:
+  drivePath: /documents
+  localPath: /Users/rahulradhakrishnan/Documents/dropbox

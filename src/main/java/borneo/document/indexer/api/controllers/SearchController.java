@@ -32,7 +32,7 @@ public class SearchController {
     private SearchEngine searchEngine;
 
 
- //   @GetMapping(value = "/search/{keyword}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/search/{keyword}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<SearchApiResponse> query(HttpServletRequest request, @PathVariable(value = "keyword") String keyword) throws ApiException {
         if (!Validators.isValidSearchApiRequest(keyword)) {
@@ -47,7 +47,7 @@ public class SearchController {
         }
     }
 
-    @GetMapping(value = "/search/{keywords}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/search/Keywords/{keywords}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<SearchMultiKeywordApiResponse> queryKeywords(HttpServletRequest httpRequest, @PathVariable(value = "keywords") String keywords) throws ApiException {
 
