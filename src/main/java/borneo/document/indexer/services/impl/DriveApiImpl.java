@@ -41,7 +41,7 @@ public class DriveApiImpl implements DriveApi {
     @Override
     public String getDownloadLink(String dropboxPath) throws ServiceException {
         try {
-            return this.dropBoxApi.getFileDownloadUrl(dropboxPath);
+            return this.dropBoxApi.getShareLink(dropboxPath);
         } catch (DbxException e) {
             throw new ServiceException(e);
         }

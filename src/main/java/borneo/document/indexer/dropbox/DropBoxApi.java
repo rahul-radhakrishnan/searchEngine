@@ -65,7 +65,7 @@ public class DropBoxApi {
             throw e;
         }
 
-        this.getFileDownloadUrl(dropboxPath);
+        this.getShareLink(dropboxPath);
         return outputPath;
     }
 
@@ -113,13 +113,25 @@ public class DropBoxApi {
      * @return
      * @throws DbxException
      */
-    public String getFileDownloadUrl(String dropboxPath) throws DbxException {
+    public String getShareLink(String dropboxPath) throws DbxException {
         ListSharedLinksResult listSharedLinksResult = client.sharing()
                 .listSharedLinksBuilder()
                 .withPath(dropboxPath).withDirectOnly(true)
                 .start();
-        String url = listSharedLinksResult.getLinks().get(0).getUrl();
-        return url;
+        if (listSharedLinksResult.getLinks().size() == 0) {
+            return this.createShareLink(dropboxPath);
+        }
+        return listSharedLinksResult.getLinks().get(0).getUrl();
+    }
+
+    /**
+     * @param dropboxPath
+     * @return
+     * @throws DbxException
+     */
+    public String createShareLink(String dropboxPath) throws DbxException {
+        SharedLinkMetadata sharedLinkMetadata = this.client.sharing().createSharedLinkWithSettings(dropboxPath);
+        return sharedLinkMetadata.getUrl();
     }
 
 }
