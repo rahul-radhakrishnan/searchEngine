@@ -11,7 +11,7 @@ elasticsearch:
   type:
 
 dropbox:
-  accesskey: DyM650aKB6IAAAAAAAAAAfLhrwNQmgGy4SmGPnqKPFf5JyeAp6EqagvEx449BMVX
+  accesskey: 
   app: testApp
 
 index:
