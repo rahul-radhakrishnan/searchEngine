@@ -208,7 +208,7 @@ public class SearchEngineImpl implements SearchEngine {
             SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
             sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
             sourceBuilder.sort(new ScoreSortBuilder().order(SortOrder.DESC));
-            sourceBuilder.fetchSource(includeFieldsDocument, excludeFieldsDocument);
+            sourceBuilder.fetchSource(includeFieldsData, excludeFieldsData);
             sourceBuilder.query(QueryBuilders.matchQuery(DOCUMENT_DATA, keyword));
             sourceBuilder.fetchSource(true);
             searchRequest.source(sourceBuilder);
@@ -223,19 +223,12 @@ public class SearchEngineImpl implements SearchEngine {
      * @throws ServiceException
      */
     private boolean documentAlreadyExists(DocumentSearchQuery query) throws ServiceException {
-        SearchRequest searchRequest = this.createDocumentSearchRequest(query);
-        SearchResponse searchResponse;
         try {
-            searchResponse = this.esConnector.getClient().search(searchRequest, RequestOptions.DEFAULT);
-            SearchHits hits = searchResponse.getHits();
-            SearchHit[] searchHits = hits.getHits();
-            if (searchHits.length > 0)
-                return true;
-
+            return this.esConnector.getClient().search(this.createDocumentSearchRequest(query), RequestOptions.DEFAULT)
+                    .getHits().getHits().length > 0;
         } catch (IOException e) {
             throw new ServiceException(ServiceErrorType.SEARCH_QUERY_FAILED);
         }
-        return false;
     }
 
     /**
@@ -248,7 +241,7 @@ public class SearchEngineImpl implements SearchEngine {
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
         sourceBuilder.sort(new ScoreSortBuilder().order(SortOrder.DESC));
-        sourceBuilder.fetchSource(includeFieldsData, excludeFieldsData);
+        sourceBuilder.fetchSource(includeFieldsDocument, excludeFieldsDocument);
         sourceBuilder.query(QueryBuilders.matchQuery(DOCUMENT_NAME, query.getDocumentName()));
         sourceBuilder.fetchSource(true);
         searchRequest.source(sourceBuilder);

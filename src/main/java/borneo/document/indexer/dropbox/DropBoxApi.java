@@ -6,7 +6,6 @@ import borneo.document.indexer.exceptions.ServiceException;
 import com.dropbox.core.DbxDownloader;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
-import com.dropbox.core.ServerException;
 import com.dropbox.core.util.IOUtil;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.DownloadErrorException;
@@ -69,8 +68,7 @@ public class DropBoxApi {
      * @param dropboxPath
      * @param outputPath
      * @return
-     * @throws DbxException
-     * @throws IOException
+     * @throws ServiceException
      */
     public String downloadFile(String dropboxPath, String outputPath) throws ServiceException {
         try {
@@ -95,12 +93,12 @@ public class DropBoxApi {
         }
     }
 
-    /**
+    /***
+     *
      * @param localFilePath
      * @param dropboxPath
      * @return
-     * @throws DbxException
-     * @throws IOException
+     * @throws ServiceException
      */
 
     public String uploadFile(String localFilePath, String dropboxPath) throws ServiceException {
