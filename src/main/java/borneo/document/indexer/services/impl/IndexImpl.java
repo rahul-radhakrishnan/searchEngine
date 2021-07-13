@@ -11,6 +11,7 @@ import borneo.document.indexer.models.ParserData;
 import borneo.document.indexer.models.SearchEngineData;
 import borneo.document.indexer.services.DriveApi;
 import borneo.document.indexer.services.Index;
+import borneo.document.indexer.services.Parser;
 import borneo.document.indexer.services.SearchEngine;
 import borneo.document.indexer.utils.KeyGenerator;
 import com.dropbox.core.DbxException;
@@ -43,7 +44,7 @@ public class IndexImpl implements Index {
      * The Apache Tika Driver object.
      */
     @Autowired
-    private TikaApi tikaApi;
+    private Parser parser;
 
     /**
      * The Search Engine object.
@@ -91,7 +92,7 @@ public class IndexImpl implements Index {
      */
     @Override
     public IndexFromLocalResponse indexFromLocal(IndexDocumentLocal indexDocumentLocal) throws ServiceException {
-        ParserData fileContents = this.tikaApi.parseStringFromFile(indexDocumentLocal.getPath());
+        ParserData fileContents = this.parser.parseStringFromFile(indexDocumentLocal.getPath());
         String id = KeyGenerator.generateRandomUniqueString();
         String file = id + "." + this.metatypeExtensionMapping.get(fileContents.getType());
         String drivePath = this.drivePath + "/" + file;
@@ -114,7 +115,7 @@ public class IndexImpl implements Index {
             String downloadedFile = this.driveApi.download(indexDocumentDrive.getPath(), this.localPath);
             String id = KeyGenerator.generateRandomUniqueString();
             String url = this.driveApi.getDownloadLink(indexDocumentDrive.getPath());
-            ParserData fileContents = this.tikaApi.parseStringFromFile(downloadedFile);
+            ParserData fileContents = this.parser.parseStringFromFile(downloadedFile);
             this.searchEngine.insert(new SearchEngineData(id, fileContents.getData(), this.drivePath,
                     fileContents.getType(), indexDocumentDrive.getPath(), url));
             if (!new File(downloadedFile).delete()) {

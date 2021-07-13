@@ -15,6 +15,9 @@ import java.io.File;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+/**
+ * The DriverApi Integration Test
+ */
 public class DriveApiTest extends IntegrationTest {
 
     /**
@@ -50,9 +53,12 @@ public class DriveApiTest extends IntegrationTest {
         assertNull(file);
     }
 
+    /**
+     * Provide an invalid path and expect the Service Layer exception
+     */
+
     @After
     public void destroy() {
-
         if (new File(this.localPath).exists()) {
             new File(this.localPath).delete();
         }

@@ -61,7 +61,8 @@ public class TikaApi implements Parser {
             Tika tika = new Tika();
             Metadata metadata = new Metadata();
             data = new ParserData();
-            String s = StringUtils.tokenise(tika.parseToString(stream, metadata));
+            String s = StringUtils.analyze(tika.parseToString(stream, metadata)); // Analyzing the string to reduce the network traffic.
+            // Trade-off will be on the processing speed. This can be replaced with contents directly read from the file without altering.
 
             if (!this.isSupportedFormat(metadata.get(Metadata.CONTENT_TYPE))) {
                 throw new ServiceException(ServiceErrorType.UNSUPPORTED_FORMAT);

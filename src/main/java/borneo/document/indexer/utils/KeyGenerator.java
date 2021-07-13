@@ -5,7 +5,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import java.util.UUID;
 
 /**
- * Utility class for generating UUID
+ * Utility class for UUID/Key generation
  */
 public class KeyGenerator {
 

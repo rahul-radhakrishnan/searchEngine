@@ -6,7 +6,6 @@ import java.util.Properties;
 
 import borneo.document.indexer.config.DropBoxConfig;
 import borneo.document.indexer.config.ElasticSearchConfig;
-import borneo.document.indexer.config.TikaConfig;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
@@ -24,7 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {IntegrationTest.SpringTestConfig.class, ElasticSearchConfig.class,
-        DropBoxConfig.class, TikaConfig.class})
+        DropBoxConfig.class})
 public class IntegrationTest {
 
     /**
@@ -68,11 +67,6 @@ public class IntegrationTest {
             ppc.setProperties(properties);
             return ppc;
         }
-
-    }
-
-    @Test
-    public void test() throws Exception {
 
     }
 

@@ -7,10 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.io.IOException;
 
 
 /**
@@ -21,7 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @ControllerAdvice
 public class DocumentIndexerControllerAdvice {
 
-    private static final Logger LOG = LoggerFactory
+    private static final Logger logger = LoggerFactory
             .getLogger(DocumentIndexerControllerAdvice.class);
 
     /**
@@ -31,7 +35,7 @@ public class DocumentIndexerControllerAdvice {
     @ResponseBody
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ErrorResponse> handleApiExceptionHandler(ApiException ex) {
-        LOG.error(ex.getErrorType().getDescription(), ex);
+        logger.error(ex.getErrorType().getDescription(), ex);
         ErrorResponse response = new ErrorResponse(ex.getErrorType().getDescription());
         return new ResponseEntity<ErrorResponse>(response, ex.getErrorType().getHttpStatus());
     }
@@ -43,7 +47,7 @@ public class DocumentIndexerControllerAdvice {
     @ResponseBody
     @ExceptionHandler(ServiceException.class)
     public ResponseEntity<ErrorResponse> serviceLayerExceptionHandler(ServiceException ex) {
-        LOG.error("Code: " + ex.getErrorType().getCode() + " description :" + ex.getErrorType().getDescription());
+        logger.error("Code: " + ex.getErrorType().getCode() + " description :" + ex.getErrorType().getDescription());
         ErrorResponse response = new ErrorResponse(ex.getErrorType().getDescription());
         return new ResponseEntity<ErrorResponse>(response, ex.getErrorType().getHttpStatus());
     }
@@ -57,8 +61,42 @@ public class DocumentIndexerControllerAdvice {
     @ResponseBody
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<Object> handleHttpMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
-        LOG.error(ex.getMessage(), ex);
+        logger.error(ex.getMessage(), ex);
         return new ResponseEntity<Object>(new Object(), HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    /**
+     * Handle HTTP-header Content-Type unsupported exception
+     *
+     * @param ex caught exception
+     * @return expectedResponse entity
+     */
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    @ResponseBody
+    public ResponseEntity<Object> handleHttpMediaTypeNotSupportedException(
+            HttpMediaTypeNotSupportedException ex) {
+        logger.error(ex.getMessage(), ex);
+        return new ResponseEntity<Object>(new Object(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+    }
+
+    /**
+     * Handle json conversion exception
+     *
+     * @param ex HttpMessageNotReadableException
+     * @return ResponseEntity
+     * @throws IOException IOException
+     */
+    @SuppressWarnings("unused")
+    @ResponseBody
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(
+            HttpMessageNotReadableException ex)
+            throws IOException {
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        Throwable t = ex.getCause();
+        String exceptionName = t.getClass().getName();
+        String extraMessage = t.getMessage();
+        return new ResponseEntity<>(new ErrorResponse("Json mapping Failed"), HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -70,8 +108,10 @@ public class DocumentIndexerControllerAdvice {
     @ResponseBody
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex) {
-        LOG.error(ex.getMessage(), ex);
+        logger.error(ex.getMessage(), ex);
         ErrorResponse response = new ErrorResponse("Internal Server Error");
         return new ResponseEntity<ErrorResponse>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
 }

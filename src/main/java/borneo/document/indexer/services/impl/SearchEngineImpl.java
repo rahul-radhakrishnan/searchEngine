@@ -2,6 +2,7 @@ package borneo.document.indexer.services.impl;
 
 
 import borneo.document.indexer.elasticsearch.ElasticSearchConnector;
+import borneo.document.indexer.enums.Messages;
 import borneo.document.indexer.enums.ServiceErrorType;
 import borneo.document.indexer.exceptions.ServiceException;
 import borneo.document.indexer.models.*;
@@ -108,6 +109,12 @@ public class SearchEngineImpl implements SearchEngine {
                 result.getResults().add(document);
             }
 
+            if (result.getResults().isEmpty()) {
+                result.setMessage(Messages.NO_DOCUMENT_FOUND_FOR_THE_KEYWORD.getMessage());
+            } else {
+                result.setMessage(Messages.DOCUMENT_FOUND_FOR_THE_KEYWORD.getMessage() + result.getResults().size());
+            }
+
         } catch (IOException e) {
             throw new ServiceException(ServiceErrorType.SEARCH_QUERY_FAILED);
         }
@@ -136,6 +143,11 @@ public class SearchEngineImpl implements SearchEngine {
                     document.setDocumentUrl((String) source.get(DOCUMENT_URL));
                     result.getResults().add(document);
                 }
+            }
+            if (result.getResults().isEmpty()) {
+                result.setMessage(Messages.NO_DOCUMENT_FOUND_FOR_THE_KEYWORD.getMessage());
+            } else {
+                result.setMessage(Messages.DOCUMENT_FOUND_FOR_THE_KEYWORD.getMessage() + result.getResults().size());
             }
 
         } catch (IOException e) {

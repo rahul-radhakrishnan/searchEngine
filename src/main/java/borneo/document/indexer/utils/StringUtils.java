@@ -1,26 +1,41 @@
 package borneo.document.indexer.utils;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+
+import java.io.IOException;
 
 /**
- *
+ * String Utility class.
  */
 public class StringUtils {
 
-
-    private static String regex;
-    private static Pattern pattern;
-
-    static {
-        regex = "\\s+";
-        pattern = Pattern.compile(regex);
+    /**
+     * @param contents
+     * @return
+     * @throws IOException
+     */
+    public static String analyze(String contents) throws IOException {
+        return analyze(contents, new StandardAnalyzer());
     }
 
-    public static String tokenise(String str) {
-        Matcher matcher = pattern.matcher(str);
-        //Replacing all space characters with single space
-        return matcher.replaceAll(" ").replaceAll("[^a-zA-Z0-9]", " ");
+    /**
+     * @param text
+     * @param analyzer
+     * @return
+     * @throws IOException
+     */
+    private static String analyze(String text, Analyzer analyzer) throws IOException {
+        String result = "";
+        TokenStream tokenStream = analyzer.tokenStream("contents", text);
+        CharTermAttribute attr = tokenStream.addAttribute(CharTermAttribute.class);
+        tokenStream.reset();
+        while (tokenStream.incrementToken()) {
+            result = result + " " + attr.toString();
+        }
+        return result;
     }
 
 }

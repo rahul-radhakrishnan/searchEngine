@@ -1,20 +1,14 @@
 package borneo.document.indexer.controllers.test;
 
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import borneo.document.indexer.api.controllers.IndexController;
-import borneo.document.indexer.api.exceptions.ApiException;
 import borneo.document.indexer.api.requests.IndexDocumentDrive;
+import borneo.document.indexer.api.requests.IndexDocumentLocal;
 import borneo.document.indexer.api.responses.IndexFromDriveResponse;
 import borneo.document.indexer.api.responses.IndexFromLocalResponse;
+import borneo.document.indexer.application.DocumentIndexerApplication;
 import borneo.document.indexer.application.DocumentIndexerControllerAdvice;
-import borneo.document.indexer.api.requests.IndexDocumentLocal;
-import borneo.document.indexer.util.Mapper;
-import borneo.document.indexer.exceptions.ServiceException;
 import borneo.document.indexer.services.Index;
+import borneo.document.indexer.util.Mapper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,18 +16,28 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Test class for the Index Controller
  *
  * @author rahul.radhakrishnan
  */
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = DocumentIndexerApplication.class)
+@AutoConfigureMockMvc
+@EnableAutoConfiguration(exclude= SecurityAutoConfiguration.class)
 public class IndexControllerTest {
 
     @InjectMocks
@@ -92,20 +96,5 @@ public class IndexControllerTest {
                 .content(Mapper.writeValueAsString(this.indexDocumentDriveRequest)))
                 .andExpect(status().isOk());
     }
-
-    /**
-     * Negative Scenario
-     *
-     * @throws Exception
-     */
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testIndexFromLocalNegative() throws Exception {
-        when(this.index.indexFromDrive(this.indexDocumentDriveRequest)).thenThrow(ApiException.class);
-        this.mvc.perform(post("/indexDrive").contentType(MediaType.APPLICATION_JSON)
-                .content(Mapper.writeValueAsString(this.indexDocumentDriveRequest)))
-                .andExpect(status().isInternalServerError());
-    }
-
 
 }
