@@ -67,8 +67,11 @@ public class SearchEngineImpl implements SearchEngine {
     /**
      * Include and exclude fields to be added in the query result
      */
-    private final String[] includeFields = new String[]{DOCUMENT_NAME, DOCUMENT_PATH, DOCUMENT_FORMAT, DOCUMENT_URL};
-    private final String[] excludeFields = new String[]{DOCUMENT_DATA};
+    private final String[] includeFieldsData = new String[]{DOCUMENT_NAME, DOCUMENT_PATH, DOCUMENT_FORMAT, DOCUMENT_URL};
+    private final String[] excludeFieldsData = new String[]{DOCUMENT_DATA};
+
+    private final String[] includeFieldsDocument = new String[]{DOCUMENT_NAME};
+    private final String[] excludeFieldsDocument = new String[]{DOCUMENT_DATA, DOCUMENT_PATH, DOCUMENT_FORMAT, DOCUMENT_URL};
 
     /**
      * @param data
@@ -76,6 +79,9 @@ public class SearchEngineImpl implements SearchEngine {
      */
     @Override
     public void insert(SearchEngineData data) throws ServiceException {
+        if (documentAlreadyExists(new DocumentSearchQuery(data.getDocumentName()))) {
+            throw new ServiceException(ServiceErrorType.DOCUMENT_ALREADY_EXISTS);
+        }
         try {
             IndexRequest indexRequest = this.createInsertRequest(data);
             final IndexResponse response = this.esConnector.getClient().index(indexRequest, RequestOptions.DEFAULT);
@@ -184,7 +190,7 @@ public class SearchEngineImpl implements SearchEngine {
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
         sourceBuilder.sort(new ScoreSortBuilder().order(SortOrder.DESC));
-        sourceBuilder.fetchSource(includeFields, excludeFields);
+        sourceBuilder.fetchSource(includeFieldsData, excludeFieldsData);
         sourceBuilder.query(QueryBuilders.matchQuery(DOCUMENT_DATA, query.getKeyword()));
         sourceBuilder.fetchSource(true);
         searchRequest.source(sourceBuilder);
@@ -202,13 +208,51 @@ public class SearchEngineImpl implements SearchEngine {
             SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
             sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
             sourceBuilder.sort(new ScoreSortBuilder().order(SortOrder.DESC));
-            sourceBuilder.fetchSource(includeFields, excludeFields);
+            sourceBuilder.fetchSource(includeFieldsDocument, excludeFieldsDocument);
             sourceBuilder.query(QueryBuilders.matchQuery(DOCUMENT_DATA, keyword));
             sourceBuilder.fetchSource(true);
             searchRequest.source(sourceBuilder);
             multiSearchRequest.add(searchRequest);
         }
         return multiSearchRequest;
+    }
+
+    /**
+     * @param query
+     * @return
+     * @throws ServiceException
+     */
+    private boolean documentAlreadyExists(DocumentSearchQuery query) throws ServiceException {
+        SearchRequest searchRequest = this.createDocumentSearchRequest(query);
+        SearchResponse searchResponse;
+        try {
+            searchResponse = this.esConnector.getClient().search(searchRequest, RequestOptions.DEFAULT);
+            SearchHits hits = searchResponse.getHits();
+            SearchHit[] searchHits = hits.getHits();
+            if (searchHits.length > 0)
+                return true;
+
+        } catch (IOException e) {
+            throw new ServiceException(ServiceErrorType.SEARCH_QUERY_FAILED);
+        }
+        return false;
+    }
+
+    /**
+     * @param query
+     * @return
+     */
+
+    private SearchRequest createDocumentSearchRequest(DocumentSearchQuery query) {
+        SearchRequest searchRequest = new SearchRequest(this.index);
+        SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+        sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
+        sourceBuilder.sort(new ScoreSortBuilder().order(SortOrder.DESC));
+        sourceBuilder.fetchSource(includeFieldsData, excludeFieldsData);
+        sourceBuilder.query(QueryBuilders.matchQuery(DOCUMENT_NAME, query.getDocumentName()));
+        sourceBuilder.fetchSource(true);
+        searchRequest.source(sourceBuilder);
+        return searchRequest;
     }
 
 }

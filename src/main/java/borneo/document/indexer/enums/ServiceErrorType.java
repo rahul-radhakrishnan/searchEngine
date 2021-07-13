@@ -21,7 +21,8 @@ public enum ServiceErrorType {
     DOWNLOADED_FILE_NOT_ACCESSIBLE("008", "Downloaded File Path Corrupted/Non-accessible", HttpStatus.INTERNAL_SERVER_ERROR),
     UPLOAD_FAILED("009", "Upload to drive failed", HttpStatus.INTERNAL_SERVER_ERROR),
     DOWNLOAD_LINK_CREATION_FAILED("010", "Shared Link creation failed", HttpStatus.INTERNAL_SERVER_ERROR),
-    INVALID_DRIVE_PATH("011", "File not exist in drive.", HttpStatus.BAD_REQUEST);
+    INVALID_DRIVE_PATH("011", "File not exist in drive.", HttpStatus.BAD_REQUEST),
+    DOCUMENT_ALREADY_EXISTS("012", "Document Already Indexed",  HttpStatus.ALREADY_REPORTED);
 
     /**
      * Error code
