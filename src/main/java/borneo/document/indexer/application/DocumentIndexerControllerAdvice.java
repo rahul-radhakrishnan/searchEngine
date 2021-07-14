@@ -18,7 +18,8 @@ import java.io.IOException;
 
 
 /**
- * Spring controller advice class for Exception Handling
+ * Spring controller advice class for Exception Handling. The framework will create ExceptionHandler
+ * from all the methods with the @ExceptionHandler and uses it to handle all the exceptions thrown over the controllers.
  *
  * @author rahul.radhakrishnan
  */

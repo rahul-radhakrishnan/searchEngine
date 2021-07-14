@@ -2,7 +2,6 @@ package borneo.document.indexer.services.impl;
 
 
 import borneo.document.indexer.elasticsearch.ElasticSearchConnector;
-import borneo.document.indexer.enums.Messages;
 import borneo.document.indexer.enums.ServiceErrorType;
 import borneo.document.indexer.exceptions.ServiceException;
 import borneo.document.indexer.models.*;
@@ -34,6 +33,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static borneo.document.indexer.enums.Messages.*;
 import static borneo.document.indexer.constants.Constants.*;
 
 /**
@@ -122,9 +122,9 @@ public class SearchEngineImpl implements SearchEngine {
             }
 
             if (result.getResults().isEmpty()) {
-                result.setMessage(Messages.NO_DOCUMENT_FOUND_FOR_THE_KEYWORD.getMessage());
+                result.setMessage(NO_DOCUMENT_FOUND_FOR_THE_KEYWORD.getMessage());
             } else {
-                result.setMessage(Messages.DOCUMENT_FOUND_FOR_THE_KEYWORD.getMessage() + result.getResults().size());
+                result.setMessage(DOCUMENT_FOUND_FOR_THE_KEYWORD.getMessage() + result.getResults().size());
             }
 
         } catch (IOException e) {
@@ -159,9 +159,9 @@ public class SearchEngineImpl implements SearchEngine {
                 }
             }
             if (result.getResults().isEmpty()) {
-                result.setMessage(Messages.NO_DOCUMENT_FOUND_FOR_THE_KEYWORD.getMessage());
+                result.setMessage(NO_DOCUMENT_FOUND_FOR_THE_KEYWORD.getMessage());
             } else {
-                result.setMessage(Messages.DOCUMENT_FOUND_FOR_THE_KEYWORD.getMessage() + result.getResults().size());
+                result.setMessage(DOCUMENT_FOUND_FOR_THE_KEYWORD.getMessage() + result.getResults().size());
             }
 
         } catch (IOException e) {
@@ -303,3 +303,5 @@ public class SearchEngineImpl implements SearchEngine {
     }
 
 }
+
+
