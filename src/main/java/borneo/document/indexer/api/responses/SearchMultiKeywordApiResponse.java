@@ -17,7 +17,7 @@ public class SearchMultiKeywordApiResponse {
     /**
      * List of keywords on the search was requested.
      */
-    private List<String> keyword;
+    private List<String> keywords;
 
     /**
      * @param searchResults
@@ -25,7 +25,7 @@ public class SearchMultiKeywordApiResponse {
      */
     public SearchMultiKeywordApiResponse(SearchResult searchResults, List<String> keyword) {
         this.searchResults = searchResults;
-        this.keyword = keyword;
+        this.keywords = keyword;
     }
 
     /**
@@ -45,14 +45,14 @@ public class SearchMultiKeywordApiResponse {
     /**
      * @return
      */
-    public List<String> getKeyword() {
-        return keyword;
+    public List<String> getKeywords() {
+        return keywords;
     }
 
     /**
-     * @param keyword
+     * @param keywords
      */
-    public void setKeyword(List<String> keyword) {
-        this.keyword = keyword;
+    public void setKeywords(List<String> keywords) {
+        this.keywords = keywords;
     }
 }

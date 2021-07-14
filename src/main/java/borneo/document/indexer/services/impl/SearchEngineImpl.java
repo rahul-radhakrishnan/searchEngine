@@ -7,6 +7,8 @@ import borneo.document.indexer.enums.ServiceErrorType;
 import borneo.document.indexer.exceptions.ServiceException;
 import borneo.document.indexer.models.*;
 import borneo.document.indexer.services.SearchEngine;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.MultiSearchRequest;
@@ -74,6 +76,8 @@ public class SearchEngineImpl implements SearchEngine {
     private final String[] excludeFieldsDocument = new String[]{DOCUMENT_DATA, DOCUMENT_PATH, DOCUMENT_FORMAT, DOCUMENT_URL};
 
     /**
+     * Description:
+     *
      * @param data
      * @throws ServiceException
      */
@@ -93,6 +97,8 @@ public class SearchEngineImpl implements SearchEngine {
     }
 
     /**
+     * Description:
+     *
      * @param query
      * @return
      * @throws ServiceException
@@ -128,6 +134,8 @@ public class SearchEngineImpl implements SearchEngine {
     }
 
     /**
+     * Description:
+     *
      * @param query
      * @return
      * @throws ServiceException
@@ -163,6 +171,31 @@ public class SearchEngineImpl implements SearchEngine {
     }
 
     /**
+     * Description:
+     *
+     * @param query
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public boolean deleteDocument(DocumentDeleteQuery query) throws ServiceException {
+        try {
+            SearchHit[] hits = this.esConnector.getClient()
+                    .search(this.createDocumentSearchRequest(new DocumentSearchQuery(query.getDocumentDrivePath())),
+                            RequestOptions.DEFAULT)
+                    .getHits().getHits();
+            for (SearchHit hit : hits) {
+                this.deleteDocument(this.index, hit.getId());
+            }
+        } catch (IOException e) {
+            throw new ServiceException(ServiceErrorType.DOCUMENT_DELETEION_FAILED);
+        }
+        return false;
+    }
+
+    /**
+     * Description:
+     *
      * @param data SearchEngineData
      * @return IndexRequest
      * @throws IOException
@@ -181,6 +214,8 @@ public class SearchEngineImpl implements SearchEngine {
     }
 
     /**
+     * Description:
+     *
      * @param query
      * @return
      */
@@ -198,6 +233,8 @@ public class SearchEngineImpl implements SearchEngine {
     }
 
     /**
+     * Description:
+     *
      * @param query
      * @return
      */
@@ -218,6 +255,8 @@ public class SearchEngineImpl implements SearchEngine {
     }
 
     /**
+     * Description:
+     *
      * @param query
      * @return
      * @throws ServiceException
@@ -232,6 +271,8 @@ public class SearchEngineImpl implements SearchEngine {
     }
 
     /**
+     * Description:
+     *
      * @param query
      * @return
      */
@@ -246,6 +287,19 @@ public class SearchEngineImpl implements SearchEngine {
         sourceBuilder.fetchSource(true);
         searchRequest.source(sourceBuilder);
         return searchRequest;
+    }
+
+    /**
+     * Description:
+     *
+     * @param index
+     * @param id
+     * @throws IOException
+     */
+    private void deleteDocument(String index, String id) throws IOException {
+        DeleteRequest request = new DeleteRequest(index, id);
+        DeleteResponse deleteResponse = this.esConnector.getClient().delete(
+                request, RequestOptions.DEFAULT);
     }
 
 }

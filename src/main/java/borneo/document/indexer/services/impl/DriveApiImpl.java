@@ -28,6 +28,8 @@ public class DriveApiImpl implements DriveApi {
     private DropBoxApi dropBoxApi;
 
     /**
+     * Description:
+     *
      * @param drivePath
      * @param filePath
      * @return
@@ -42,6 +44,8 @@ public class DriveApiImpl implements DriveApi {
     }
 
     /**
+     * Description:
+     *
      * @param filePath
      * @param drivePath
      * @return
@@ -54,6 +58,20 @@ public class DriveApiImpl implements DriveApi {
     }
 
     /**
+     * Description:
+     *
+     * @param dropboxPath
+     * @throws ServiceException
+     */
+    @Override
+    public void deleteFile(String dropboxPath) throws ServiceException {
+        this.dropBoxApi.deleteFile(dropboxPath);
+        logger.info("Deletion success : {}", dropboxPath);
+    }
+
+    /**
+     * Description:
+     *
      * @param dropboxPath
      * @return
      * @throws ServiceException

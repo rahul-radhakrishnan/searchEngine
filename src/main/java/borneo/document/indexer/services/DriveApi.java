@@ -12,6 +12,8 @@ import java.io.IOException;
 public interface DriveApi {
 
     /**
+     * Description:
+     *
      * @param drivePath
      * @param filePath
      * @return
@@ -20,6 +22,8 @@ public interface DriveApi {
     public String download(String drivePath, String filePath) throws ServiceException, IOException, DbxException;
 
     /**
+     * Description:
+     *
      * @param filePath
      * @param drivePath
      * @return
@@ -27,7 +31,19 @@ public interface DriveApi {
      */
     public String upload(String filePath, String drivePath) throws ServiceException;
 
+
     /**
+     * Description:
+     *
+     * @param dropboxPath
+     * @return
+     * @throws ServiceException
+     */
+    public void deleteFile(String dropboxPath) throws ServiceException;
+
+    /**
+     * Description:
+     *
      * @param dropboxPath
      * @return
      * @throws ServiceException

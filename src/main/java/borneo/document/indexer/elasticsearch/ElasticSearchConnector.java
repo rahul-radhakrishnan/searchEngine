@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *  The Elasticsearch Client connection class.
+ * The Elasticsearch Client connection class.
  */
 public class ElasticSearchConnector {
     /**
@@ -38,6 +38,8 @@ public class ElasticSearchConnector {
     private String type;
 
     /**
+     * Description:
+     *
      * @param host
      * @param port
      * @param userName

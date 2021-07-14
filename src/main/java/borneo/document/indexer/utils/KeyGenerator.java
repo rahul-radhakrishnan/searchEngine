@@ -10,6 +10,8 @@ import java.util.UUID;
 public class KeyGenerator {
 
     /**
+     * Description:
+     *
      * @return UUID
      */
     public static UUID generateUUID() {
@@ -17,6 +19,8 @@ public class KeyGenerator {
     }
 
     /**
+     * Description:
+     *
      * @return
      */
     public static String generateRandomUniqueString() {

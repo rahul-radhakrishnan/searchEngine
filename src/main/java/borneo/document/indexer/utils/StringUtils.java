@@ -13,6 +13,8 @@ import java.io.IOException;
 public class StringUtils {
 
     /**
+     * Description:
+     *
      * @param contents
      * @return
      * @throws IOException
@@ -22,6 +24,8 @@ public class StringUtils {
     }
 
     /**
+     * Description:
+     *
      * @param text
      * @param analyzer
      * @return

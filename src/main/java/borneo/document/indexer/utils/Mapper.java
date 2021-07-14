@@ -18,6 +18,8 @@ public final class Mapper {
     private static ObjectMapper mapper = new ObjectMapper();
 
     /**
+     * Description:
+     *
      * @param object
      * @param <T>
      * @return
@@ -31,6 +33,8 @@ public final class Mapper {
     }
 
     /**
+     * Description:
+     *
      * @param content
      * @param clz
      * @param <T>

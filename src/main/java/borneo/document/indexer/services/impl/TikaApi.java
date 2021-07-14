@@ -49,6 +49,8 @@ public class TikaApi implements Parser {
 
 
     /**
+     * Description:
+     *
      * @param path
      * @return ParserData
      * @throws ServiceException
@@ -81,6 +83,8 @@ public class TikaApi implements Parser {
 
 
     /**
+     * Description:
+     *
      * @return Tika
      */
 
@@ -90,6 +94,8 @@ public class TikaApi implements Parser {
 
 
     /**
+     * Description:
+     *
      * @param mediaType
      * @return
      * @throws IOException

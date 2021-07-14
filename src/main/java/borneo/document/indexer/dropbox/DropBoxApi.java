@@ -8,9 +8,7 @@ import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.util.IOUtil;
 import com.dropbox.core.v2.DbxClientV2;
-import com.dropbox.core.v2.files.DownloadErrorException;
-import com.dropbox.core.v2.files.FileMetadata;
-import com.dropbox.core.v2.files.WriteMode;
+import com.dropbox.core.v2.files.*;
 import com.dropbox.core.v2.sharing.ListSharedLinksResult;
 import com.dropbox.core.v2.sharing.SharedLinkMetadata;
 import org.slf4j.Logger;
@@ -55,7 +53,7 @@ public class DropBoxApi {
     }
 
     /**
-     * Progress listener
+     * Description: Progress listener
      *
      * @param uploaded
      * @param size
@@ -65,6 +63,8 @@ public class DropBoxApi {
     }
 
     /**
+     * Description:
+     *
      * @param dropboxPath
      * @param outputPath
      * @return
@@ -94,7 +94,7 @@ public class DropBoxApi {
     }
 
     /***
-     *
+     * Description:
      * @param localFilePath
      * @param dropboxPath
      * @return
@@ -128,6 +128,8 @@ public class DropBoxApi {
     }
 
     /**
+     * Description:
+     *
      * @param dropboxPath
      * @return
      * @throws DbxException
@@ -144,6 +146,8 @@ public class DropBoxApi {
     }
 
     /**
+     * Description:
+     *
      * @param dropboxPath
      * @return
      * @throws DbxException
@@ -151,6 +155,20 @@ public class DropBoxApi {
     private String createShareLink(String dropboxPath) throws DbxException {
         SharedLinkMetadata sharedLinkMetadata = this.client.sharing().createSharedLinkWithSettings(dropboxPath);
         return sharedLinkMetadata.getUrl();
+    }
+
+    /**
+     * Description:
+     *
+     * @param dropBoxPath
+     * @throws ServiceException
+     */
+    public void deleteFile(String dropBoxPath) throws ServiceException {
+        try {
+            DeleteResult result = client.files().deleteV2(dropBoxPath);
+        } catch (DbxException e) {
+            throw new ServiceException(ServiceErrorType.DOCUMENT_DELETION_FROM_DRIVE_FAILED);
+        }
     }
 
 }

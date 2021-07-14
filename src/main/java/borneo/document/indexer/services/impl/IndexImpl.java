@@ -1,5 +1,6 @@
 package borneo.document.indexer.services.impl;
 
+import borneo.document.indexer.api.responses.DocumentDeleteResponse;
 import borneo.document.indexer.api.responses.IndexFromDriveResponse;
 import borneo.document.indexer.api.responses.IndexFromLocalResponse;
 import borneo.document.indexer.enums.Messages;
@@ -7,6 +8,7 @@ import borneo.document.indexer.enums.ServiceErrorType;
 import borneo.document.indexer.exceptions.ServiceException;
 import borneo.document.indexer.api.requests.IndexDocumentDrive;
 import borneo.document.indexer.api.requests.IndexDocumentLocal;
+import borneo.document.indexer.models.DocumentDeleteQuery;
 import borneo.document.indexer.models.ParserData;
 import borneo.document.indexer.models.SearchEngineData;
 import borneo.document.indexer.services.DriveApi;
@@ -86,6 +88,8 @@ public class IndexImpl implements Index {
     }
 
     /**
+     * Description:
+     *
      * @param indexDocumentLocal
      * @return
      * @throws ServiceException
@@ -105,6 +109,8 @@ public class IndexImpl implements Index {
     }
 
     /**
+     * Description:
+     *
      * @param indexDocumentDrive
      * @return
      * @throws ServiceException
@@ -121,16 +127,28 @@ public class IndexImpl implements Index {
             if (!new File(downloadedFile).delete()) {
                 logger.error("File not deleted!!!"); // Not an exception as a this can be logged to queue and be cleaned up asynchronously.
             }
-            IndexFromDriveResponse response = new IndexFromDriveResponse(indexDocumentDrive.getPath(), url,
+            return new IndexFromDriveResponse(indexDocumentDrive.getPath(), url,
                     Messages.INDEX_FROM_DRIVE_SUCCESS.getMessage());
-            return response;
-        } catch (IOException e) {
-            logger.error("Exception while downloading the drive file : {}", indexDocumentDrive.getPath(), e);
-            throw new ServiceException(ServiceErrorType.DOWNLOAD_FAILED);
-        } catch (DbxException e) {
+        } catch (IOException | DbxException e) {
             logger.error("Exception while downloading the drive file : {}", indexDocumentDrive.getPath(), e);
             throw new ServiceException(ServiceErrorType.DOWNLOAD_FAILED);
         }
+    }
+
+    /**
+     * Description:
+     *
+     * @param query
+     * @return
+     * @throws ServiceException
+     */
+    @Override
+    public DocumentDeleteResponse deleteDocument(DocumentDeleteQuery query) throws ServiceException {
+        this.driveApi.deleteFile(query.getDocumentDrivePath());
+        this.searchEngine.deleteDocument(query);
+        logger.info("Deletion success : {}", query.getDocumentDrivePath());
+        return new DocumentDeleteResponse(query.getDocumentDrivePath(),
+                Messages.DOCUMENT_DELETED_SUCCESS.getMessage());
     }
 
 }

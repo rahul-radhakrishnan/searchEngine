@@ -22,7 +22,9 @@ public enum ServiceErrorType {
     UPLOAD_FAILED("009", "Upload to drive failed", HttpStatus.INTERNAL_SERVER_ERROR),
     DOWNLOAD_LINK_CREATION_FAILED("010", "Shared Link creation failed", HttpStatus.INTERNAL_SERVER_ERROR),
     INVALID_DRIVE_PATH("011", "File not exist in drive.", HttpStatus.BAD_REQUEST),
-    DOCUMENT_ALREADY_EXISTS("012", "Document Already Indexed",  HttpStatus.ALREADY_REPORTED);
+    DOCUMENT_ALREADY_EXISTS("012", "Document Already Indexed", HttpStatus.ALREADY_REPORTED),
+    DOCUMENT_DELETEION_FAILED("013", "Document Deletion Failed", HttpStatus.INTERNAL_SERVER_ERROR),
+    DOCUMENT_DELETION_FROM_DRIVE_FAILED("014", "Document deletion drive failed", HttpStatus.INTERNAL_SERVER_ERROR);
 
     /**
      * Error code
