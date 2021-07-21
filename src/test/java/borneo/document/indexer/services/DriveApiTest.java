@@ -42,6 +42,9 @@ public class DriveApiTest extends IntegrationTest {
         assertEquals("https://www.dropbox.com/s/n23dmveu1ozilik/test.pdf?dl=0", file);
     }
 
+    /**
+     * Provide an invalid path and expect the Service Layer exception
+     */
     @Test
     public void testFailure() throws Exception {
         boolean exceptionThrown = false;
@@ -54,9 +57,6 @@ public class DriveApiTest extends IntegrationTest {
         assertEquals(exceptionThrown, Boolean.TRUE);
     }
 
-    /**
-     * Provide an invalid path and expect the Service Layer exception
-     */
 
     @After
     public void destroy() {
