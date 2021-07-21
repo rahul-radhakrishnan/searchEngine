@@ -19,7 +19,7 @@ public interface DriveApi {
      * @return
      * @throws ServiceException
      */
-    public String download(String drivePath, String filePath) throws ServiceException, IOException, DbxException;
+    public String download(String drivePath, String filePath) throws ServiceException;
 
     /**
      * Description:

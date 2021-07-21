@@ -33,7 +33,7 @@ public enum ApiErrorType {
      * @param description
      * @param httpStatus
      */
-    private ApiErrorType(String code, String description, HttpStatus httpStatus) {
+    ApiErrorType(String code, String description, HttpStatus httpStatus) {
         this.code = code;
         this.description = description;
         this.httpStatus = httpStatus;

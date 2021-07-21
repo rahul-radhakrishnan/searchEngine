@@ -17,6 +17,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -75,6 +76,9 @@ public class SearchEngineImpl implements SearchEngine {
     private final String[] includeFieldsDocument = new String[]{DOCUMENT_NAME};
     private final String[] excludeFieldsDocument = new String[]{DOCUMENT_DATA, DOCUMENT_PATH, DOCUMENT_FORMAT, DOCUMENT_URL};
 
+    private final String[] includeFieldsDocumentSearch = new String[]{DOCUMENT_NAME, DOCUMENT_PATH};
+    private final String[] excludeFieldsDocumentSearch = new String[]{DOCUMENT_DATA, DOCUMENT_FORMAT, DOCUMENT_URL};
+
     /**
      * Description:
      *
@@ -83,7 +87,8 @@ public class SearchEngineImpl implements SearchEngine {
      */
     @Override
     public void insert(SearchEngineData data) throws ServiceException {
-        if (documentAlreadyExists(new DocumentSearchQuery(data.getDocumentName()))) {
+        if (documentAlreadyExists(new DocumentSearchQuery(data.getDocumentName(),
+                data.getDocumentPath()))) {
             throw new ServiceException(ServiceErrorType.DOCUMENT_ALREADY_EXISTS);
         }
         try {
@@ -181,8 +186,8 @@ public class SearchEngineImpl implements SearchEngine {
     public boolean deleteDocument(DocumentDeleteQuery query) throws ServiceException {
         try {
             SearchHit[] hits = this.esConnector.getClient()
-                    .search(this.createDocumentSearchRequest(new DocumentSearchQuery(query.getDocumentDrivePath())),
-                            RequestOptions.DEFAULT)
+                    .search(this.createDocumentSearchRequest(new DocumentSearchQuery(query.getDocumentName(),
+                            query.getDocumentDrivePath())), RequestOptions.DEFAULT)
                     .getHits().getHits();
             for (SearchHit hit : hits) {
                 this.deleteDocument(this.index, hit.getId());
@@ -263,8 +268,10 @@ public class SearchEngineImpl implements SearchEngine {
      */
     private boolean documentAlreadyExists(DocumentSearchQuery query) throws ServiceException {
         try {
-            return this.esConnector.getClient().search(this.createDocumentSearchRequest(query), RequestOptions.DEFAULT)
-                    .getHits().getHits().length > 0;
+            SearchHit[] hits = this.esConnector.getClient().search(this.createDocumentSearchRequest(query),
+                    RequestOptions.DEFAULT)
+                    .getHits().getHits();
+            return hits.length > 0;
         } catch (IOException e) {
             throw new ServiceException(ServiceErrorType.SEARCH_QUERY_FAILED);
         }
@@ -282,8 +289,9 @@ public class SearchEngineImpl implements SearchEngine {
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
         sourceBuilder.timeout(new TimeValue(60, TimeUnit.SECONDS));
         sourceBuilder.sort(new ScoreSortBuilder().order(SortOrder.DESC));
-        sourceBuilder.fetchSource(includeFieldsDocument, excludeFieldsDocument);
-        sourceBuilder.query(QueryBuilders.matchQuery(DOCUMENT_NAME, query.getDocumentName()));
+        sourceBuilder.fetchSource(includeFieldsDocumentSearch, excludeFieldsDocumentSearch);
+        sourceBuilder.query(QueryBuilders.termQuery(DOCUMENT_PATH, query.getDocumentPath()));
+        sourceBuilder.query(QueryBuilders.termQuery(DOCUMENT_NAME, query.getDocumentName()));
         sourceBuilder.fetchSource(true);
         searchRequest.source(sourceBuilder);
         return searchRequest;

@@ -8,7 +8,7 @@ public class DocumentDeleteResponse {
     /**
      * Doc id
      */
-    private String id;
+    private String documentPath;
 
     /**
      * Message string
@@ -16,11 +16,11 @@ public class DocumentDeleteResponse {
     private String message;
 
     /**
-     * @param id
+     * @param documentPath
      * @param message
      */
-    public DocumentDeleteResponse(String id, String message) {
-        this.id = id;
+    public DocumentDeleteResponse(String documentPath, String message) {
+        this.documentPath = documentPath;
         this.message = message;
     }
 
@@ -28,15 +28,15 @@ public class DocumentDeleteResponse {
     /**
      * @return
      */
-    public String getId() {
-        return id;
+    public String getDocumentPath() {
+        return documentPath;
     }
 
     /**
-     * @param id
+     * @param documentPath
      */
-    public void setId(String id) {
-        this.id = id;
+    public void setDocumentPath(String documentPath) {
+        this.documentPath = documentPath;
     }
 
 

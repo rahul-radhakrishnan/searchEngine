@@ -1,13 +1,13 @@
 package borneo.document.indexer.services.impl;
 
+import borneo.document.indexer.api.requests.IndexDocumentDriveRequest;
+import borneo.document.indexer.api.requests.IndexDocumentLocalRequest;
 import borneo.document.indexer.api.responses.DocumentDeleteResponse;
 import borneo.document.indexer.api.responses.IndexFromDriveResponse;
 import borneo.document.indexer.api.responses.IndexFromLocalResponse;
 import borneo.document.indexer.enums.Messages;
 import borneo.document.indexer.enums.ServiceErrorType;
 import borneo.document.indexer.exceptions.ServiceException;
-import borneo.document.indexer.api.requests.IndexDocumentDrive;
-import borneo.document.indexer.api.requests.IndexDocumentLocal;
 import borneo.document.indexer.models.DocumentDeleteQuery;
 import borneo.document.indexer.models.ParserData;
 import borneo.document.indexer.models.SearchEngineData;
@@ -16,7 +16,7 @@ import borneo.document.indexer.services.Index;
 import borneo.document.indexer.services.Parser;
 import borneo.document.indexer.services.SearchEngine;
 import borneo.document.indexer.utils.KeyGenerator;
-import com.dropbox.core.DbxException;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -90,47 +89,51 @@ public class IndexImpl implements Index {
     /**
      * Description:
      *
-     * @param indexDocumentLocal
+     * @param indexDocumentLocalRequest
      * @return
      * @throws ServiceException
      */
     @Override
-    public IndexFromLocalResponse indexFromLocal(IndexDocumentLocal indexDocumentLocal) throws ServiceException {
-        ParserData fileContents = this.parser.parseStringFromFile(indexDocumentLocal.getPath());
+    public IndexFromLocalResponse indexFromLocal(IndexDocumentLocalRequest indexDocumentLocalRequest) throws ServiceException {
+        ParserData fileContents = this.parser.parseStringFromFile(indexDocumentLocalRequest.getPath());
         String id = KeyGenerator.generateRandomUniqueString();
         String file = id + "." + this.metatypeExtensionMapping.get(fileContents.getType());
-        String drivePath = this.drivePath + "/" + file;
-        String url = this.driveApi.upload(indexDocumentLocal.getPath(), drivePath);
+        String drivePath = this.drivePath + file;
+        String url = this.driveApi.upload(indexDocumentLocalRequest.getPath(), drivePath);
         this.searchEngine.insert(new SearchEngineData(id, fileContents.getData(), this.drivePath,
                 fileContents.getType(), file, url));
-        IndexFromLocalResponse response = new IndexFromLocalResponse(indexDocumentLocal.getPath(), drivePath, url,
+        return new IndexFromLocalResponse(indexDocumentLocalRequest.getPath(), drivePath, url,
                 Messages.INDEX_FROM_LOCAL_SUCCESS.getMessage());
-        return response;
     }
 
     /**
      * Description:
      *
-     * @param indexDocumentDrive
+     * @param indexDocumentDriveRequest
      * @return
      * @throws ServiceException
      */
     @Override
-    public IndexFromDriveResponse indexFromDrive(IndexDocumentDrive indexDocumentDrive) throws ServiceException {
+    public IndexFromDriveResponse indexFromDrive(IndexDocumentDriveRequest indexDocumentDriveRequest) throws ServiceException {
         try {
-            String downloadedFile = this.driveApi.download(indexDocumentDrive.getPath(), this.localPath);
             String id = KeyGenerator.generateRandomUniqueString();
-            String url = this.driveApi.getDownloadLink(indexDocumentDrive.getPath());
+            String downloadedFile = this.localPath + id;
+            String url = this.driveApi.download(indexDocumentDriveRequest.getPath(),
+                    downloadedFile);
             ParserData fileContents = this.parser.parseStringFromFile(downloadedFile);
-            this.searchEngine.insert(new SearchEngineData(id, fileContents.getData(), this.drivePath,
-                    fileContents.getType(), indexDocumentDrive.getPath(), url));
+            this.searchEngine.insert(new SearchEngineData(id, fileContents.getData(),
+                    FilenameUtils.getFullPath(indexDocumentDriveRequest.getPath()),
+                    fileContents.getType(), FilenameUtils.getName(indexDocumentDriveRequest.getPath()), url));
             if (!new File(downloadedFile).delete()) {
                 logger.error("File not deleted!!!"); // Not an exception as a this can be logged to queue and be cleaned up asynchronously.
             }
-            return new IndexFromDriveResponse(indexDocumentDrive.getPath(), url,
+            return new IndexFromDriveResponse(indexDocumentDriveRequest.getPath(), url,
                     Messages.INDEX_FROM_DRIVE_SUCCESS.getMessage());
-        } catch (IOException | DbxException e) {
-            logger.error("Exception while downloading the drive file : {}", indexDocumentDrive.getPath(), e);
+        } catch (ServiceException ex) {
+            logger.error("Exception while downloading the drive file : {}", indexDocumentDriveRequest.getPath(), ex);
+            throw ex;
+        } catch (Exception ex) {
+            logger.error("Exception while downloading the drive file : {}", indexDocumentDriveRequest.getPath(), ex);
             throw new ServiceException(ServiceErrorType.DOWNLOAD_FAILED);
         }
     }
@@ -144,10 +147,10 @@ public class IndexImpl implements Index {
      */
     @Override
     public DocumentDeleteResponse deleteDocument(DocumentDeleteQuery query) throws ServiceException {
-        this.driveApi.deleteFile(query.getDocumentDrivePath());
+        this.driveApi.deleteFile(query.getDocumentDrivePath() + query.getDocumentName());
         this.searchEngine.deleteDocument(query);
         logger.info("Deletion success : {}", query.getDocumentDrivePath());
-        return new DocumentDeleteResponse(query.getDocumentDrivePath(),
+        return new DocumentDeleteResponse(query.getDocumentDrivePath() + query.getDocumentName(),
                 Messages.DOCUMENT_DELETED_SUCCESS.getMessage());
     }
 

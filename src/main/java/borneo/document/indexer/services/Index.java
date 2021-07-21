@@ -4,8 +4,8 @@ import borneo.document.indexer.api.responses.DocumentDeleteResponse;
 import borneo.document.indexer.api.responses.IndexFromDriveResponse;
 import borneo.document.indexer.api.responses.IndexFromLocalResponse;
 import borneo.document.indexer.exceptions.ServiceException;
-import borneo.document.indexer.api.requests.IndexDocumentDrive;
-import borneo.document.indexer.api.requests.IndexDocumentLocal;
+import borneo.document.indexer.api.requests.IndexDocumentDriveRequest;
+import borneo.document.indexer.api.requests.IndexDocumentLocalRequest;
 import borneo.document.indexer.models.DocumentDeleteQuery;
 
 /**
@@ -18,20 +18,20 @@ public interface Index {
     /**
      * Description:
      *
-     * @param indexDocumentLocal
+     * @param indexDocumentLocalRequest
      * @return
      * @throws ServiceException
      */
-    public IndexFromLocalResponse indexFromLocal(IndexDocumentLocal indexDocumentLocal) throws ServiceException;
+    public IndexFromLocalResponse indexFromLocal(IndexDocumentLocalRequest indexDocumentLocalRequest) throws ServiceException;
 
     /**
      * Description:
      *
-     * @param indexDocumentDrive
+     * @param indexDocumentDriveRequest
      * @return
      * @throws ServiceException
      */
-    public IndexFromDriveResponse indexFromDrive(IndexDocumentDrive indexDocumentDrive) throws ServiceException;
+    public IndexFromDriveResponse indexFromDrive(IndexDocumentDriveRequest indexDocumentDriveRequest) throws ServiceException;
 
     /**
      * Description:

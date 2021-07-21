@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.IOException;
-
 
 /**
  * Spring controller advice class for Exception Handling. The framework will create ExceptionHandler
@@ -85,14 +83,12 @@ public class DocumentIndexerControllerAdvice {
      *
      * @param ex HttpMessageNotReadableException
      * @return ResponseEntity
-     * @throws IOException IOException
      */
     @SuppressWarnings("unused")
     @ResponseBody
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(
-            HttpMessageNotReadableException ex)
-            throws IOException {
+            HttpMessageNotReadableException ex) {
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
         Throwable t = ex.getCause();
         String exceptionName = t.getClass().getName();

@@ -11,9 +11,9 @@ elasticsearch:
   type:
 
 dropbox:
-  accesskey: 
+  accesskey: AiHPPaun23MAAAAAAAAAAbbjwvLNWxI1l5Ifp99qL_qXReBvQOx3MOI3ATQxIMBA
   app: testApp
 
 index:
-  drivePath: /documents
-  localPath: /Users/rahulradhakrishnan/Documents/dropbox
+  drivePath: /documents/
+  localPath: /Users/rahulradhakrishnan/Documents/dropbox/

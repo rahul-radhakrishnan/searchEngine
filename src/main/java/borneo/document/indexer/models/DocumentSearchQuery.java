@@ -11,9 +11,15 @@ public class DocumentSearchQuery {
     private String documentName;
 
     /**
+     * Document Path
+     */
+    private String documentPath;
+
+    /**
      * @param documentName
      */
-    public DocumentSearchQuery(String documentName) {
+    public DocumentSearchQuery(String documentName, String documentPath) {
+        this.documentPath = documentPath;
         this.documentName = documentName;
     }
 
@@ -29,5 +35,19 @@ public class DocumentSearchQuery {
      */
     public void setDocumentName(String documentName) {
         this.documentName = documentName;
+    }
+
+    /**
+     * @return
+     */
+    public String getDocumentPath() {
+        return documentPath;
+    }
+
+    /**
+     * @param documentPath
+     */
+    public void setDocumentPath(String documentPath) {
+        this.documentPath = documentPath;
     }
 }

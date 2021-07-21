@@ -1,6 +1,8 @@
 package borneo.document.indexer.api.util;
 
 import borneo.document.indexer.api.requests.DocumentDeleteApiRequest;
+import borneo.document.indexer.api.requests.IndexDocumentDriveRequest;
+import borneo.document.indexer.api.requests.IndexDocumentLocalRequest;
 import borneo.document.indexer.api.requests.SearchApiRequest;
 
 import java.util.List;
@@ -15,29 +17,38 @@ public class Validator {
      * @return
      */
     public static boolean isValidSearchApiRequest(String request) {
-        if (request == null || request.isEmpty())
-            return false;
-        return true;
+        return (request != null && !request.isEmpty());
     }
 
     /**
+     * Description: Validates the DocumentDeleteRequest
+     *
      * @param request
-     * @return
-     */
-    public static boolean isValidMultiSearchApiRequest(SearchApiRequest request) {
-        if (request == null || request.getKeywords() == null || request.getKeywords().isEmpty())
-            return false;
-        return true;
-    }
-
-    /**
-     * @param request
-     * @return
+     * @return True if validation passes.
      */
     public static boolean isValidDocumentDeleteApiRequest(DocumentDeleteApiRequest request) {
-        if (request == null || request.getDocumentDrivePath() == null || request.getDocumentDrivePath().isEmpty())
-            return false;
-        return true;
+        return (request != null && request.getDocumentDrivePath() != null && !request.getDocumentDrivePath().isEmpty());
+    }
+
+    /**
+     * Description: Validates IndexDocumentDriveRequest request.
+     *
+     * @param request
+     * @return True if validation passes.
+     */
+    public static boolean isValidIndexDocumentDriveRequest(IndexDocumentDriveRequest request) {
+        return (request != null) && (request.getPath() != null) && (!request.getPath().isEmpty());
+    }
+
+
+    /**
+     * Description: Validates IndexDocumentLocalRequest request.
+     *
+     * @param request
+     * @return True if validation passes.
+     */
+    public static boolean isValidIndexDocumentLocalRequest(IndexDocumentLocalRequest request) {
+        return (request != null) && (request.getPath() != null) && (!request.getPath().isEmpty());
     }
 
     /**

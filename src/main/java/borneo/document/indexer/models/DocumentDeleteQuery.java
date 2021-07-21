@@ -10,11 +10,17 @@ public class DocumentDeleteQuery {
      */
     private String documentDrivePath;
 
+    /**
+     * Document name
+     */
+    private String documentName;
+
 
     /**
      * @param documentDrivePath
      */
-    public DocumentDeleteQuery(String documentDrivePath) {
+    public DocumentDeleteQuery(String documentName, String documentDrivePath) {
+        this.documentName = documentName;
         this.documentDrivePath = documentDrivePath;
     }
 
@@ -30,5 +36,19 @@ public class DocumentDeleteQuery {
      */
     public void setDocumentDrivePath(String documentDrivePath) {
         this.documentDrivePath = documentDrivePath;
+    }
+
+    /**
+     * @return
+     */
+    public String getDocumentName() {
+        return documentName;
+    }
+
+    /**
+     * @param documentName
+     */
+    public void setDocumentName(String documentName) {
+        this.documentName = documentName;
     }
 }

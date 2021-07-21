@@ -23,7 +23,7 @@ import java.util.Date;
 /**
  * =The DropBox access Api Object.
  */
-@Component
+//@Component
 public class DropBoxApi {
 
     /**
@@ -104,16 +104,13 @@ public class DropBoxApi {
     public String uploadFile(String localFilePath, String dropboxPath) throws ServiceException {
         try {
             File localFile = new File(localFilePath);
-            SharedLinkMetadata sharedLinkMetadata = null;
             InputStream in = new FileInputStream(localFile);
             IOUtil.ProgressListener progressListener = l -> printProgress(l, localFile.length());
             FileMetadata metadata = this.client.files().uploadBuilder(dropboxPath)
                     .withMode(WriteMode.ADD)
                     .withClientModified(new Date(localFile.lastModified()))
                     .uploadAndFinish(in, progressListener);
-            sharedLinkMetadata = this.client.sharing().createSharedLinkWithSettings(dropboxPath);
-            logger.info("File metadata : {} ", metadata.toStringMultiline());
-            return sharedLinkMetadata.getUrl();
+            return this.client.sharing().createSharedLinkWithSettings(dropboxPath).getUrl();
         } catch (DbxException | IOException ex) {
             logger.error("Error uploading to Dropbox: " + ex.getMessage());
             throw new ServiceException(ServiceErrorType.UPLOAD_FAILED);
@@ -139,10 +136,8 @@ public class DropBoxApi {
                 .listSharedLinksBuilder()
                 .withPath(dropboxPath).withDirectOnly(true)
                 .start();
-        if (listSharedLinksResult.getLinks().size() == 0) {
-            return this.createShareLink(dropboxPath);
-        }
-        return listSharedLinksResult.getLinks().get(0).getUrl();
+        return (listSharedLinksResult.getLinks().size() == 0) ? this.createShareLink(dropboxPath)
+                : listSharedLinksResult.getLinks().get(0).getUrl();
     }
 
     /**
@@ -166,6 +161,7 @@ public class DropBoxApi {
     public void deleteFile(String dropBoxPath) throws ServiceException {
         try {
             DeleteResult result = client.files().deleteV2(dropBoxPath);
+            logger.info("Document deleted : {}", result.getMetadata().getParentSharedFolderId());
         } catch (DbxException e) {
             throw new ServiceException(ServiceErrorType.DOCUMENT_DELETION_FROM_DRIVE_FAILED);
         }

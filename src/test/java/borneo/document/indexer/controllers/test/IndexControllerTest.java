@@ -1,8 +1,8 @@
 package borneo.document.indexer.controllers.test;
 
 import borneo.document.indexer.api.controllers.IndexController;
-import borneo.document.indexer.api.requests.IndexDocumentDrive;
-import borneo.document.indexer.api.requests.IndexDocumentLocal;
+import borneo.document.indexer.api.requests.IndexDocumentDriveRequest;
+import borneo.document.indexer.api.requests.IndexDocumentLocalRequest;
 import borneo.document.indexer.api.responses.IndexFromDriveResponse;
 import borneo.document.indexer.api.responses.IndexFromLocalResponse;
 import borneo.document.indexer.application.DocumentIndexerApplication;
@@ -50,17 +50,17 @@ public class IndexControllerTest {
 
     private MockMvc mvc;
 
-    private IndexDocumentLocal indexDocumentLocalRequest;
+    private IndexDocumentLocalRequest indexDocumentLocalRequest;
 
-    private IndexDocumentDrive indexDocumentDriveRequest;
+    private IndexDocumentDriveRequest indexDocumentDriveRequest;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         this.advice = new DocumentIndexerControllerAdvice();
         this.mvc = MockMvcBuilders.standaloneSetup(this.controller).setControllerAdvice(this.advice).build();
-        this.indexDocumentLocalRequest = new IndexDocumentLocal("path");
-        this.indexDocumentDriveRequest = new IndexDocumentDrive("path");
+        this.indexDocumentLocalRequest = new IndexDocumentLocalRequest("path");
+        this.indexDocumentDriveRequest = new IndexDocumentDriveRequest("path");
     }
 
     @After
