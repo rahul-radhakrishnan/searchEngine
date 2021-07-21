@@ -33,24 +33,25 @@ public class DriveApiTest extends IntegrationTest {
 
     @Before
     public void setUp() {
-        this.localPath = System.getProperty("user.dir") + "/" + "tmp.pdf";
+        this.localPath = System.getProperty("user.dir") + "/" + "test.pdf";
     }
 
     @Test
     public void testSuccess() throws Exception {
         String file = this.driveApi.download(Constants.DRIVE_PATH, this.localPath);
-        assertEquals(this.localPath, file);
+        assertEquals("https://www.dropbox.com/s/n23dmveu1ozilik/test.pdf?dl=0", file);
     }
 
     @Test
     public void testFailure() throws Exception {
-        String file = null;
+        boolean exceptionThrown = false;
         try {
             this.driveApi.download(Constants.INVALID_DRIVE_PATH, this.localPath);
         } catch (ServiceException ex) {
             logger.info("As expected");
+            exceptionThrown = true;
         }
-        assertNull(file);
+        assertEquals(exceptionThrown, Boolean.TRUE);
     }
 
     /**
