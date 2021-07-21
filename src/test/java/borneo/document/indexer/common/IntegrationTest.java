@@ -60,7 +60,7 @@ public class IntegrationTest {
             properties.setProperty("elasticsearch.type", " ");
             properties.setProperty("elasticsearch.type", "es");
 
-            properties.setProperty("dropbox.accesskey", "DyM650aKB6IAAAAAAAAAAfLhrwNQmgGy4SmGPnqKPFf5JyeAp6EqagvEx449BMVX");
+            properties.setProperty("dropbox.accesskey", "AiHPPaun23MAAAAAAAAAAbbjwvLNWxI1l5Ifp99qL_qXReBvQOx3MOI3ATQxIMBA");
             properties.setProperty("dropbox.app", "testApp");
             properties.setProperty("index.drivePath", "/documents");
             properties.setProperty("index.localPath", "/Users/rahulradhakrishnan/Documents/dropbox");
