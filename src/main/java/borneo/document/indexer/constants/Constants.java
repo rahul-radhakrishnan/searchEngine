@@ -28,7 +28,7 @@ public class Constants {
 
     public static final String DOCUMENT_URL = "documentUrl";
 
-    public static final String UPLOAD = "/upload";
+    public static final String UPLOAD = "/upload/{overwrite}";
 
     public static final String INDEX_FROM_LOCAL = "/indexLocal";
 
@@ -37,5 +37,9 @@ public class Constants {
     public static final String SEARCH_KEYWORDS = "/search/{keywords}";
 
     public static final String DELETE = "/delete";
+
+    public static final String KEYWORDS = "keywords";
+
+    public static final String OVERWRITE = "overwrite";
 }
 

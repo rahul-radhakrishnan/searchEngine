@@ -42,4 +42,13 @@ public interface SearchEngine {
      * @throws ServiceException
      */
     public boolean deleteDocument(DocumentDeleteQuery query) throws ServiceException;
+
+    /**
+     * Description:
+     *
+     * @param query
+     * @return
+     * @throws ServiceException
+     */
+    public boolean documentAlreadyExists(DocumentSearchQuery query) throws ServiceException;
 }

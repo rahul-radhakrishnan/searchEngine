@@ -8,6 +8,11 @@ public class IndexDocumentLocalRequest {
     private String path;
 
     /**
+     * Overwrite file flag
+     */
+    private boolean overwrite;
+
+    /**
      * Empty constructor for object mapper
      */
     public IndexDocumentLocalRequest() {
@@ -18,8 +23,9 @@ public class IndexDocumentLocalRequest {
      *
      * @param path
      */
-    public IndexDocumentLocalRequest(String path) {
+    public IndexDocumentLocalRequest(String path, boolean overwrite) {
         this.path = path;
+        this.overwrite = overwrite;
     }
 
     /**
@@ -34,5 +40,19 @@ public class IndexDocumentLocalRequest {
      */
     public void setPath(String path) {
         this.path = path;
+    }
+
+    /**
+     * @return
+     */
+    public boolean isOverwrite() {
+        return overwrite;
+    }
+
+    /**
+     * @param overwrite
+     */
+    public void setOverwrite(boolean overwrite) {
+        this.overwrite = overwrite;
     }
 }

@@ -59,7 +59,7 @@ public class IndexControllerTest {
         MockitoAnnotations.initMocks(this);
         this.advice = new DocumentIndexerControllerAdvice();
         this.mvc = MockMvcBuilders.standaloneSetup(this.controller).setControllerAdvice(this.advice).build();
-        this.indexDocumentLocalRequest = new IndexDocumentLocalRequest("path");
+        this.indexDocumentLocalRequest = new IndexDocumentLocalRequest("path", false);
         this.indexDocumentDriveRequest = new IndexDocumentDriveRequest("path");
     }
 

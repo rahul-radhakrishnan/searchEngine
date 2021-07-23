@@ -17,7 +17,6 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.common.xcontent.XContentFactory;
-import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -34,8 +33,9 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static borneo.document.indexer.enums.Messages.*;
 import static borneo.document.indexer.constants.Constants.*;
+import static borneo.document.indexer.enums.Messages.DOCUMENT_FOUND_FOR_THE_KEYWORD;
+import static borneo.document.indexer.enums.Messages.NO_DOCUMENT_FOUND_FOR_THE_KEYWORD;
 
 /**
  * The concrete class for the SearchEngine. The class uses Elasticsearch for indexing and searching keywords.
@@ -87,10 +87,6 @@ public class SearchEngineImpl implements SearchEngine {
      */
     @Override
     public void insert(SearchEngineData data) throws ServiceException {
-        if (documentAlreadyExists(new DocumentSearchQuery(data.getDocumentName(),
-                data.getDocumentPath()))) {
-            throw new ServiceException(ServiceErrorType.DOCUMENT_ALREADY_EXISTS);
-        }
         try {
             IndexRequest indexRequest = this.createInsertRequest(data);
             final IndexResponse response = this.esConnector.getClient().index(indexRequest, RequestOptions.DEFAULT);
@@ -192,7 +188,7 @@ public class SearchEngineImpl implements SearchEngine {
             for (SearchHit hit : hits) {
                 this.deleteDocument(this.index, hit.getId());
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new ServiceException(ServiceErrorType.DOCUMENT_DELETEION_FAILED);
         }
         return false;
@@ -266,13 +262,15 @@ public class SearchEngineImpl implements SearchEngine {
      * @return
      * @throws ServiceException
      */
-    private boolean documentAlreadyExists(DocumentSearchQuery query) throws ServiceException {
+    @Override
+    public boolean documentAlreadyExists(DocumentSearchQuery query) throws ServiceException {
         try {
             SearchHit[] hits = this.esConnector.getClient().search(this.createDocumentSearchRequest(query),
                     RequestOptions.DEFAULT)
                     .getHits().getHits();
             return hits.length > 0;
         } catch (IOException e) {
+            logger.error("ES exception", e);
             throw new ServiceException(ServiceErrorType.DATABASE_ERROR);
         }
     }

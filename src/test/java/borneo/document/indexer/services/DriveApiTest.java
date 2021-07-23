@@ -39,7 +39,7 @@ public class DriveApiTest extends IntegrationTest {
     @Test
     public void testSuccess() throws Exception {
         String file = this.driveApi.download(Constants.DRIVE_PATH, this.localPath);
-        assertEquals("https://www.dropbox.com/s/n23dmveu1ozilik/test.pdf?dl=0", file);
+        assertEquals("https://www.dropbox.com/s/5toypp8guburbyx/test.pdf?dl=0", file);
     }
 
     /**

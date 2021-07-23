@@ -9,6 +9,7 @@ import borneo.document.indexer.enums.Messages;
 import borneo.document.indexer.enums.ServiceErrorType;
 import borneo.document.indexer.exceptions.ServiceException;
 import borneo.document.indexer.models.DocumentDeleteQuery;
+import borneo.document.indexer.models.DocumentSearchQuery;
 import borneo.document.indexer.models.ParserData;
 import borneo.document.indexer.models.SearchEngineData;
 import borneo.document.indexer.services.DriveApi;
@@ -97,12 +98,15 @@ public class IndexImpl implements Index {
     public IndexFromLocalResponse indexFromLocal(IndexDocumentLocalRequest indexDocumentLocalRequest) throws ServiceException {
         ParserData fileContents = this.parser.parseStringFromFile(indexDocumentLocalRequest.getPath());
         String id = KeyGenerator.generateRandomUniqueString();
-        String file = id + "." + this.metatypeExtensionMapping.get(fileContents.getType());
-        String drivePath = this.drivePath + file;
-        String url = this.driveApi.upload(indexDocumentLocalRequest.getPath(), drivePath);
+        String fileName = FilenameUtils.getName(indexDocumentLocalRequest.getPath());
+        String driveFilePath = this.drivePath + FilenameUtils.getName(indexDocumentLocalRequest.getPath());
+        String url = this.driveApi.upload(indexDocumentLocalRequest.getPath(), driveFilePath, indexDocumentLocalRequest.isOverwrite());
+        if (indexDocumentLocalRequest.isOverwrite() && this.searchEngine.documentAlreadyExists(new DocumentSearchQuery(fileName, this.drivePath))) {
+            this.searchEngine.deleteDocument(new DocumentDeleteQuery(fileName, this.drivePath));
+        }
         this.searchEngine.insert(new SearchEngineData(id, fileContents.getData(), this.drivePath,
-                fileContents.getType(), file, url));
-        return new IndexFromLocalResponse(indexDocumentLocalRequest.getPath(), drivePath, url,
+                fileContents.getType(), fileName, url));
+        return new IndexFromLocalResponse(indexDocumentLocalRequest.getPath(), driveFilePath, url,
                 Messages.INDEX_FROM_LOCAL_SUCCESS.getMessage());
     }
 
@@ -116,14 +120,18 @@ public class IndexImpl implements Index {
     @Override
     public IndexFromDriveResponse indexFromDrive(IndexDocumentDriveRequest indexDocumentDriveRequest) throws ServiceException {
         try {
+            String path = FilenameUtils.getFullPath(indexDocumentDriveRequest.getPath());
+            String fileName = FilenameUtils.getName(indexDocumentDriveRequest.getPath());
             String id = KeyGenerator.generateRandomUniqueString();
             String downloadedFile = this.localPath + id;
+            if (this.searchEngine.documentAlreadyExists(new DocumentSearchQuery(fileName, path))) {
+                throw new ServiceException(ServiceErrorType.DOCUMENT_ALREADY_EXISTS);
+            }
             String url = this.driveApi.download(indexDocumentDriveRequest.getPath(),
                     downloadedFile);
             ParserData fileContents = this.parser.parseStringFromFile(downloadedFile);
-            this.searchEngine.insert(new SearchEngineData(id, fileContents.getData(),
-                    FilenameUtils.getFullPath(indexDocumentDriveRequest.getPath()),
-                    fileContents.getType(), FilenameUtils.getName(indexDocumentDriveRequest.getPath()), url));
+            this.searchEngine.insert(new SearchEngineData(id, fileContents.getData(), path,
+                    fileContents.getType(), fileName, url));
             if (!new File(downloadedFile).delete()) {
                 logger.error("File not deleted!!!"); // Not an exception as a this can be logged to queue and be cleaned up asynchronously.
             }

@@ -100,15 +100,26 @@ public class DropBoxApi implements DriveApi {
      * @throws ServiceException
      */
     @Override
-    public String upload(String localFilePath, String dropboxPath) throws ServiceException {
+    public String upload(String localFilePath, String dropboxPath, Boolean overwrite) throws ServiceException {
         try {
+            WriteMode writeMode = WriteMode.ADD;
+            boolean fileAlreadyExists = this.fileAlreadyExists(dropboxPath);
+            if (!overwrite && fileAlreadyExists) {
+                throw new ServiceException(ServiceErrorType.DOCUMENT_ALREADY_EXISTS);
+            }
             File localFile = new File(localFilePath);
             InputStream in = new FileInputStream(localFile);
             IOUtil.ProgressListener progressListener = l -> printProgress(l, localFile.length());
+            if (overwrite && fileAlreadyExists) {
+                writeMode = WriteMode.OVERWRITE;
+            }
             FileMetadata metadata = this.client.files().uploadBuilder(dropboxPath)
-                    .withMode(WriteMode.ADD)
-                    .withClientModified(new Date(localFile.lastModified()))
+                    .withMode(writeMode)
+                    .withClientModified(new Date())
                     .uploadAndFinish(in, progressListener);
+            if (overwrite && fileAlreadyExists) {
+                return this.getDownloadLink(dropboxPath);
+            }
             return this.client.sharing().createSharedLinkWithSettings(dropboxPath).getUrl();
         } catch (DbxException | IOException ex) {
             logger.error("Error uploading to Dropbox: " + ex.getMessage());
@@ -177,5 +188,24 @@ public class DropBoxApi implements DriveApi {
             logger.error("Invalid argument", ex);
             throw new ServiceException(ServiceErrorType.INVALID_FILE_PATH);
         }
+    }
+
+    /**
+     * @param dropboxPath
+     * @return
+     * @throws ServiceException
+     */
+    private boolean fileAlreadyExists(String dropboxPath) throws ServiceException {
+        boolean isExists = true;
+        try {
+            client.files().getMetadata(dropboxPath);
+        } catch (GetMetadataErrorException e) {
+            if (e.errorValue.isPath() && e.errorValue.getPathValue().isNotFound()) {
+                isExists = false;
+            }
+        } catch (Exception ex) {
+            throw new ServiceException(ServiceErrorType.DROPBOX_INTERNAL_SERVER_ERROR);
+        }
+        return isExists;
     }
 }

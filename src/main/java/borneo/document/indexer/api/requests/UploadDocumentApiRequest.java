@@ -11,11 +11,17 @@ public class UploadDocumentApiRequest {
     private String metadata;
 
     /**
+     *
+     */
+    private boolean overwrite;
+
+    /**
      * Constructor
      *
      * @param metadata
      */
-    public UploadDocumentApiRequest(String metadata) {
+    public UploadDocumentApiRequest(String metadata, boolean overwrite) {
+        this.overwrite = overwrite;
         this.metadata = metadata;
     }
 
@@ -37,5 +43,19 @@ public class UploadDocumentApiRequest {
      */
     public void setMetadata(String metadata) {
         this.metadata = metadata;
+    }
+
+    /**
+     * @return
+     */
+    public boolean isOverwrite() {
+        return overwrite;
+    }
+
+    /**
+     * @param overwrite
+     */
+    public void setOverwrite(boolean overwrite) {
+        this.overwrite = overwrite;
     }
 }

@@ -29,7 +29,7 @@ public interface DriveApi {
      * @return
      * @throws ServiceException
      */
-    public String upload(String filePath, String drivePath) throws ServiceException;
+    public String upload(String filePath, String drivePath, Boolean overwrite) throws ServiceException;
 
 
     /**

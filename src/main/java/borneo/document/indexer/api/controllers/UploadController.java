@@ -3,6 +3,7 @@ package borneo.document.indexer.api.controllers;
 import borneo.document.indexer.api.exceptions.ApiErrorType;
 import borneo.document.indexer.api.exceptions.ApiException;
 import borneo.document.indexer.api.requests.IndexDocumentLocalRequest;
+import borneo.document.indexer.api.requests.UploadDocumentApiRequest;
 import borneo.document.indexer.api.responses.UploadDocumentResponse;
 import borneo.document.indexer.enums.Messages;
 import borneo.document.indexer.exceptions.ServiceException;
@@ -11,11 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -58,18 +58,21 @@ public class UploadController {
      * @throws ApiException
      * @throws ServiceException
      */
-    @RequestMapping(value = (UPLOAD), consumes = {"multipart/form-data"}, method = RequestMethod.POST)
+    @RequestMapping(value = (UPLOAD), consumes = {MediaType.APPLICATION_JSON_VALUE,
+            MediaType.MULTIPART_FORM_DATA_VALUE}, method = RequestMethod.POST)
     public ResponseEntity<UploadDocumentResponse> uploadAndIndex(MultipartHttpServletRequest request,
-                                                                 @RequestParam("file") MultipartFile file) throws ApiException, ServiceException {
+                                                                 @RequestParam("file") MultipartFile file,
+                                                                 @PathVariable(value = OVERWRITE) boolean overwrite)
+            throws ApiException, ServiceException {
         if (file.isEmpty()) {
             logger.error("Empty file uploaded.");
-            return ResponseEntity.badRequest().body(new UploadDocumentResponse(Messages.DOCUMENT_UPLOAD_FILE_EMPTY.getMessage()));
+            throw new ApiException(ApiErrorType.FILE_EMPTY_ERROR);
         }
         try {
             byte[] bytes = file.getBytes();
             Path path = Paths.get(this.uploadFolder + file.getOriginalFilename());
             Files.write(path, bytes);
-            index.indexFromLocal(new IndexDocumentLocalRequest(path.toAbsolutePath().toString()));
+            index.indexFromLocal(new IndexDocumentLocalRequest(path.toAbsolutePath().toString(), overwrite));
         } catch (IOException e) {
             logger.error("Upload Failed.", e);
             throw new ApiException(ApiErrorType.INTERNAL_SERVER_ERROR);

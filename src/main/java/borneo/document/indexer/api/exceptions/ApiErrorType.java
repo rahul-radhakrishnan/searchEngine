@@ -12,7 +12,8 @@ public enum ApiErrorType {
     UNDEFINED_ERROR("000", "Undefined error", HttpStatus.INTERNAL_SERVER_ERROR),
     REQUEST_OBJECT_NULL("001", "Request Body Null", HttpStatus.BAD_REQUEST),
     INVALID_REQUEST_PARAMETERS("002", "Invalid Request Parameters", HttpStatus.BAD_REQUEST),
-    INTERNAL_SERVER_ERROR("003", "Internal Server error", HttpStatus.INTERNAL_SERVER_ERROR);
+    INTERNAL_SERVER_ERROR("003", "Internal Server error", HttpStatus.INTERNAL_SERVER_ERROR),
+    FILE_EMPTY_ERROR("004", "File is empty", HttpStatus.BAD_REQUEST);
 
     /**
      * Error code

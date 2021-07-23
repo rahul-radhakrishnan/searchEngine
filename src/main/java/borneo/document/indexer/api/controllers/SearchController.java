@@ -29,12 +29,15 @@ import static borneo.document.indexer.constants.Constants.*;
 @Controller
 public class SearchController {
 
+    /**
+     * The SearchEngine class.
+     */
     @Autowired
     private SearchEngine searchEngine;
 
 
     /**
-     * Description : Description: The endpoint with /search/keywords/{keywords}. {keywords} is a path variable.
+     * Description : Description: The endpoint with /search/{keywords}. {keywords} is a path variable.
      *
      * @param httpRequest
      * @param keywords
@@ -44,7 +47,8 @@ public class SearchController {
      */
     @GetMapping(value = SEARCH_KEYWORDS, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<SearchMultiKeywordApiResponse> queryKeywords(HttpServletRequest httpRequest, @PathVariable(value = "keywords") String keywords)
+    public ResponseEntity<SearchMultiKeywordApiResponse> queryKeywords(HttpServletRequest httpRequest,
+                                                                       @PathVariable(value = KEYWORDS) String keywords)
             throws ApiException, ServiceException {
         if (!Validator.isValidSearchApiRequest(keywords)) {
             throw new ApiException(ApiErrorType.INVALID_REQUEST_PARAMETERS);

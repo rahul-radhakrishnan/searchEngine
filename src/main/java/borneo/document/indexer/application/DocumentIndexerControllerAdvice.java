@@ -1,5 +1,6 @@
 package borneo.document.indexer.application;
 
+import borneo.document.indexer.api.exceptions.ApiErrorType;
 import borneo.document.indexer.api.exceptions.ApiException;
 import borneo.document.indexer.api.responses.ErrorResponse;
 import borneo.document.indexer.exceptions.ServiceException;
@@ -13,6 +14,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 
 /**
@@ -37,6 +39,14 @@ public class DocumentIndexerControllerAdvice {
         logger.error(ex.getErrorType().getDescription(), ex);
         ErrorResponse response = new ErrorResponse(ex.getErrorType().getDescription());
         return new ResponseEntity<ErrorResponse>(response, ex.getErrorType().getHttpStatus());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ResponseEntity<ErrorResponse> handleAMissingServletRequestPartExceptionnHandler(MissingServletRequestPartException ex) {
+        logger.error("File upload exception", ex);
+        ErrorResponse response = new ErrorResponse(ApiErrorType.FILE_EMPTY_ERROR.getDescription());
+        return new ResponseEntity<ErrorResponse>(response, ApiErrorType.FILE_EMPTY_ERROR.getHttpStatus());
     }
 
     /**
@@ -93,6 +103,7 @@ public class DocumentIndexerControllerAdvice {
         Throwable t = ex.getCause();
         String exceptionName = t.getClass().getName();
         String extraMessage = t.getMessage();
+        logger.error("Message not readable {} {}", exceptionName, extraMessage);
         return new ResponseEntity<>(new ErrorResponse("Json mapping Failed"), HttpStatus.BAD_REQUEST);
     }
 
