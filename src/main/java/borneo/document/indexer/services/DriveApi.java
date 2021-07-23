@@ -41,12 +41,4 @@ public interface DriveApi {
      */
     public void deleteFile(String dropboxPath) throws ServiceException;
 
-    /**
-     * Description:
-     *
-     * @param dropboxPath
-     * @return
-     * @throws ServiceException
-     */
-    public String getDownloadLink(String dropboxPath) throws ServiceException;
 }

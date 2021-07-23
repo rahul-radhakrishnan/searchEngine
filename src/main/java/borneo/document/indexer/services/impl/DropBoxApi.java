@@ -130,8 +130,7 @@ public class DropBoxApi implements DriveApi {
      * @return
      * @throws DbxException
      */
-    @Override
-    public String getDownloadLink(String dropboxPath) throws ServiceException {
+    private String getDownloadLink(String dropboxPath) throws ServiceException {
         try {
             ListSharedLinksResult listSharedLinksResult = null;
             listSharedLinksResult = client.sharing()
