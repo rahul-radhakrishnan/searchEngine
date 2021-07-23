@@ -1,7 +1,7 @@
 package borneo.document.indexer.config;
 
 import borneo.document.indexer.constants.Constants;
-import borneo.document.indexer.dropbox.DropBoxApi;
+import borneo.document.indexer.services.impl.DropBoxApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

@@ -17,3 +17,6 @@ dropbox:
 index:
   drivePath: /documents/
   localPath: /Users/rahulradhakrishnan/Documents/dropbox/
+
+upload:
+  uploadFolder: /Users/rahulradhakrishnan/Documents/dropbox/

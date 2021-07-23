@@ -10,7 +10,10 @@ public enum Messages {
     INDEX_FROM_LOCAL_SUCCESS("Indexing from Local success"),
     NO_DOCUMENT_FOUND_FOR_THE_KEYWORD("No Document found."),
     DOCUMENT_FOUND_FOR_THE_KEYWORD(" Number of documents found:  "),
-    DOCUMENT_DELETED_SUCCESS(" Document deleted successfully");
+    DOCUMENT_DELETED_SUCCESS(" Document deleted successfully"),
+    DOCUMENT_UPLOAD_SUCCESS("Document Uploaded successfully"),
+    DOCUMENT_UPLOAD_FAILED("Document Upload Failed"),
+    DOCUMENT_UPLOAD_FILE_EMPTY("File Empty");
 
 
     /**

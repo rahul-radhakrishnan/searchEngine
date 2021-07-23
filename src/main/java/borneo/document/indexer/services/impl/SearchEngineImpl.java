@@ -273,7 +273,7 @@ public class SearchEngineImpl implements SearchEngine {
                     .getHits().getHits();
             return hits.length > 0;
         } catch (IOException e) {
-            throw new ServiceException(ServiceErrorType.SEARCH_QUERY_FAILED);
+            throw new ServiceException(ServiceErrorType.DATABASE_ERROR);
         }
     }
 

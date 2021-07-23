@@ -3,17 +3,13 @@ package borneo.document.indexer.api.responses;
 /**
  *
  */
-public class DocumentDeleteResponse {
+public class DocumentDeleteResponse extends Response {
 
     /**
      * Doc id
      */
     private String documentPath;
 
-    /**
-     * Message string
-     */
-    private String message;
 
     /**
      * @param documentPath

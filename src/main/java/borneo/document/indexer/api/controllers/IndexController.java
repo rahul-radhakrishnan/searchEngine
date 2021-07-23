@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static borneo.document.indexer.constants.Constants.*;
+
 /**
  * The controller class for the indexing Apis. The endpoints for indexing files from local
  * or directly downloading from the drive.
@@ -53,7 +55,7 @@ public class IndexController {
      * @throws ApiException
      * @throws ServiceException
      */
-    @PostMapping(value = "/indexLocal", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = INDEX_FROM_LOCAL, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<IndexFromLocalResponse> indexDocumentFromLocal(@RequestBody IndexDocumentLocalRequest indexDocumentLocalRequest)
             throws ApiException, ServiceException {
@@ -72,7 +74,7 @@ public class IndexController {
      * @throws ApiException
      * @throws ServiceException
      */
-    @PostMapping(value = "/indexDrive", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = INDEX_FROM_DRIVE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<IndexFromDriveResponse> indexDocumentFromDrive(@RequestBody IndexDocumentDriveRequest indexDocumentDriveRequest)
             throws ApiException, ServiceException {
@@ -93,7 +95,7 @@ public class IndexController {
      * @throws ApiException
      * @throws ServiceException
      */
-    @DeleteMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<DocumentDeleteResponse> deleteDocument(HttpServletRequest httpRequest, @RequestBody DocumentDeleteApiRequest request)
             throws ApiException, ServiceException {

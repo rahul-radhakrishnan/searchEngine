@@ -8,28 +8,26 @@ import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.util.IOUtil;
 import com.dropbox.core.v2.DbxClientV2;
-import com.dropbox.core.v2.files.DeleteResult;
-import com.dropbox.core.v2.files.DownloadErrorException;
-import com.dropbox.core.v2.files.FileMetadata;
-import com.dropbox.core.v2.files.WriteMode;
+import com.dropbox.core.v2.files.*;
 import com.dropbox.core.v2.sharing.ListSharedLinksResult;
 import com.dropbox.core.v2.sharing.SharedLinkMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.util.Date;
 
-@Component
+/**
+ *
+ */
 public class DropBoxApi implements DriveApi {
 
     /**
      * Logger
      */
-    private static final Logger logger = LoggerFactory.getLogger(borneo.document.indexer.dropbox.DropBoxApi.class);
+    private static final Logger logger = LoggerFactory.getLogger(DropBoxApi.class);
 
     /**
      * The Request config object.
@@ -169,13 +167,16 @@ public class DropBoxApi implements DriveApi {
     public void deleteFile(String dropBoxPath) throws ServiceException {
         try {
             DeleteResult result = client.files().deleteV2(dropBoxPath);
-            logger.info("Document deleted : {}", result.getMetadata().getParentSharedFolderId());
+            logger.info("Document deleted : {}", dropBoxPath);
+        } catch (DeleteErrorException ex) {
+            logger.error("Document path does not exist", ex);
+            throw new ServiceException(ServiceErrorType.DOCUMENT_PATH_DOES_NOT_EXIST);
         } catch (DbxException e) {
             logger.error("Document deletion failed", e);
             throw new ServiceException(ServiceErrorType.DOCUMENT_DELETION_FROM_DRIVE_FAILED);
         } catch (IllegalArgumentException ex) {
-            logger.error("Document path doesn not exist", ex);
-            throw new ServiceException(ServiceErrorType.DOCUMENT_PATH_DOES_NOT_EXIST);
+            logger.error("Invalid argument", ex);
+            throw new ServiceException(ServiceErrorType.INVALID_FILE_PATH);
         }
     }
 }

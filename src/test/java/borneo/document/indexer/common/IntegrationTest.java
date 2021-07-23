@@ -64,6 +64,7 @@ public class IntegrationTest {
             properties.setProperty("dropbox.app", "testApp");
             properties.setProperty("index.drivePath", "/documents");
             properties.setProperty("index.localPath", "/Users/rahulradhakrishnan/Documents/dropbox");
+            properties.setProperty("upload.uploadFolder", "/Users/rahulradhakrishnan/Documents/dropbox");
             ppc.setProperties(properties);
             return ppc;
         }

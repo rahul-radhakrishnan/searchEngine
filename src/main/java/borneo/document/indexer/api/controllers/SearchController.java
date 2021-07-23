@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 
+import static borneo.document.indexer.constants.Constants.*;
+
 /**
  * The controller class for the Search endpoints
  */
@@ -40,7 +42,7 @@ public class SearchController {
      * @throws ApiException
      * @throws ServiceException
      */
-    @GetMapping(value = "/search/{keywords}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = SEARCH_KEYWORDS, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<SearchMultiKeywordApiResponse> queryKeywords(HttpServletRequest httpRequest, @PathVariable(value = "keywords") String keywords)
             throws ApiException, ServiceException {

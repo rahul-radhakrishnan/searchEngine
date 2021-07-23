@@ -25,7 +25,8 @@ public enum ServiceErrorType {
     DOCUMENT_ALREADY_EXISTS("012", "Document Already Indexed", HttpStatus.ALREADY_REPORTED),
     DOCUMENT_DELETEION_FAILED("013", "Document Deletion Failed", HttpStatus.INTERNAL_SERVER_ERROR),
     DOCUMENT_DELETION_FROM_DRIVE_FAILED("014", "Document deletion drive failed", HttpStatus.INTERNAL_SERVER_ERROR),
-    DOCUMENT_PATH_DOES_NOT_EXIST("015", "Document path does not exist", HttpStatus.INTERNAL_SERVER_ERROR);
+    DOCUMENT_PATH_DOES_NOT_EXIST("015", "Document path does not exist", HttpStatus.INTERNAL_SERVER_ERROR),
+    DATABASE_ERROR("016", "Database Error", HttpStatus.INTERNAL_SERVER_ERROR);
 
 
     /**

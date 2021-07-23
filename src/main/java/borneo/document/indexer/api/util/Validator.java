@@ -3,9 +3,6 @@ package borneo.document.indexer.api.util;
 import borneo.document.indexer.api.requests.DocumentDeleteApiRequest;
 import borneo.document.indexer.api.requests.IndexDocumentDriveRequest;
 import borneo.document.indexer.api.requests.IndexDocumentLocalRequest;
-import borneo.document.indexer.api.requests.SearchApiRequest;
-
-import java.util.List;
 
 /**
  * The Controller Validator class.

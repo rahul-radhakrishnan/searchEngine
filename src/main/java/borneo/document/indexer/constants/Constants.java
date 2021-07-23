@@ -27,5 +27,15 @@ public class Constants {
     public static final String DOCUMENT_ID = "id";
 
     public static final String DOCUMENT_URL = "documentUrl";
+
+    public static final String UPLOAD = "/upload";
+
+    public static final String INDEX_FROM_LOCAL = "/indexLocal";
+
+    public static final String INDEX_FROM_DRIVE = "/indexDrive";
+
+    public static final String SEARCH_KEYWORDS = "/search/{keywords}";
+
+    public static final String DELETE = "/delete";
 }
 

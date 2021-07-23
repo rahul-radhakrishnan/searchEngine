@@ -6,12 +6,6 @@ package borneo.document.indexer.api.responses;
  * @author rahul.radhakrishnan
  */
 public class ErrorResponse extends Response {
-
-    /**
-     * Response Message
-     */
-    String message;
-
     /**
      * @param message
      */

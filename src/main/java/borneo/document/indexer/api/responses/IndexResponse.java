@@ -16,11 +16,6 @@ public abstract class IndexResponse extends Response {
     private String url;
 
     /**
-     * Message which can be used to send any additional information.
-     */
-    private String message;
-
-    /**
      * @param drivePath
      * @param url
      * @param message
