@@ -60,6 +60,7 @@ public class IndexController {
     public ResponseEntity<IndexFromLocalResponse> indexDocumentFromLocal(@RequestBody IndexDocumentLocalRequest indexDocumentLocalRequest)
             throws ApiException, ServiceException {
         if (!Validator.isValidIndexDocumentLocalRequest(indexDocumentLocalRequest)) {
+            logger.error("Invalid request paramaters {}", indexDocumentLocalRequest);
             throw new ApiException(ApiErrorType.INVALID_REQUEST_PARAMETERS);
         }
         IndexFromLocalResponse response = index.indexFromLocal(indexDocumentLocalRequest);
@@ -79,6 +80,7 @@ public class IndexController {
     public ResponseEntity<IndexFromDriveResponse> indexDocumentFromDrive(@RequestBody IndexDocumentDriveRequest indexDocumentDriveRequest)
             throws ApiException, ServiceException {
         if (!Validator.isValidIndexDocumentDriveRequest(indexDocumentDriveRequest)) {
+            logger.error("Invalid request paramaters {}", indexDocumentDriveRequest);
             throw new ApiException(ApiErrorType.INVALID_REQUEST_PARAMETERS);
         }
         IndexFromDriveResponse response = index.indexFromDrive(indexDocumentDriveRequest);
@@ -100,6 +102,7 @@ public class IndexController {
     public ResponseEntity<DocumentDeleteResponse> deleteDocument(HttpServletRequest httpRequest, @RequestBody DocumentDeleteApiRequest request)
             throws ApiException, ServiceException {
         if (!Validator.isValidDocumentDeleteApiRequest(request)) {
+            logger.error("Invalid request paramaters {}", request);
             throw new ApiException(ApiErrorType.INVALID_REQUEST_PARAMETERS);
         }
 

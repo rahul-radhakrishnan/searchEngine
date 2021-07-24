@@ -44,7 +44,7 @@ public class UploadController {
     private Index index;
 
     /**
-     * es type
+     * upload folder
      */
     @Value("${upload.uploadFolder}")
     private String uploadFolder;

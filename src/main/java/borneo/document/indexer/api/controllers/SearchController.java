@@ -9,6 +9,8 @@ import borneo.document.indexer.exceptions.ServiceException;
 import borneo.document.indexer.models.SearchMultiQuery;
 import borneo.document.indexer.models.SearchResult;
 import borneo.document.indexer.services.SearchEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,11 @@ import static borneo.document.indexer.constants.Constants.*;
  */
 @Controller
 public class SearchController {
+
+    /**
+     * Logger
+     */
+    private static final Logger logger = LoggerFactory.getLogger(SearchController.class);
 
     /**
      * The SearchEngine class.
@@ -51,9 +58,9 @@ public class SearchController {
                                                                        @PathVariable(value = KEYWORDS) String keywords)
             throws ApiException, ServiceException {
         if (!Validator.isValidSearchApiRequest(keywords)) {
+            logger.error("Invalid request parameters {}", keywords);
             throw new ApiException(ApiErrorType.INVALID_REQUEST_PARAMETERS);
         }
-
         List<String> keywordList = Arrays.asList(keywords.split("\\+"));
         SearchResult result = this.searchEngine.query(new SearchMultiQuery(keywordList));
         return ResponseEntity.ok(new SearchMultiKeywordApiResponse(result, keywordList));

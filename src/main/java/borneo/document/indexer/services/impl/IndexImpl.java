@@ -99,15 +99,23 @@ public class IndexImpl implements Index {
         ParserData fileContents = this.parser.parseStringFromFile(indexDocumentLocalRequest.getPath());
         String id = KeyGenerator.generateRandomUniqueString();
         String fileName = FilenameUtils.getName(indexDocumentLocalRequest.getPath());
-        String driveFilePath = this.drivePath + FilenameUtils.getName(indexDocumentLocalRequest.getPath());
-        String url = this.driveApi.upload(indexDocumentLocalRequest.getPath(), driveFilePath, indexDocumentLocalRequest.isOverwrite());
-        if (indexDocumentLocalRequest.isOverwrite() && this.searchEngine.documentAlreadyExists(new DocumentSearchQuery(fileName, this.drivePath))) {
-            this.searchEngine.deleteDocument(new DocumentDeleteQuery(fileName, this.drivePath));
+        try {
+            String driveFilePath = this.drivePath + FilenameUtils.getName(indexDocumentLocalRequest.getPath());
+            String url = this.driveApi.upload(indexDocumentLocalRequest.getPath(), driveFilePath, indexDocumentLocalRequest.isOverwrite());
+            if (indexDocumentLocalRequest.isOverwrite() && this.searchEngine.documentAlreadyExists(new DocumentSearchQuery(fileName, this.drivePath))) {
+                this.searchEngine.deleteDocument(new DocumentDeleteQuery(fileName, this.drivePath));
+            }
+            this.searchEngine.insert(new SearchEngineData(id, fileContents.getData(), this.drivePath,
+                    fileContents.getType(), fileName, url));
+            return new IndexFromLocalResponse(indexDocumentLocalRequest.getPath(), driveFilePath, url,
+                    Messages.INDEX_FROM_LOCAL_SUCCESS.getMessage());
+        } catch (ServiceException ex) {
+            throw ex;
+        } finally {
+            if (!new File(this.localPath + fileName).delete()) {
+                logger.error("File not deleted!!!"); // Not an exception as a this can be logged to queue and be cleaned up asynchronously.
+            }
         }
-        this.searchEngine.insert(new SearchEngineData(id, fileContents.getData(), this.drivePath,
-                fileContents.getType(), fileName, url));
-        return new IndexFromLocalResponse(indexDocumentLocalRequest.getPath(), driveFilePath, url,
-                Messages.INDEX_FROM_LOCAL_SUCCESS.getMessage());
     }
 
     /**
@@ -119,11 +127,11 @@ public class IndexImpl implements Index {
      */
     @Override
     public IndexFromDriveResponse indexFromDrive(IndexDocumentDriveRequest indexDocumentDriveRequest) throws ServiceException {
+        String path = FilenameUtils.getFullPath(indexDocumentDriveRequest.getPath());
+        String fileName = FilenameUtils.getName(indexDocumentDriveRequest.getPath());
+        String id = KeyGenerator.generateRandomUniqueString();
+        String downloadedFile = this.localPath + id;
         try {
-            String path = FilenameUtils.getFullPath(indexDocumentDriveRequest.getPath());
-            String fileName = FilenameUtils.getName(indexDocumentDriveRequest.getPath());
-            String id = KeyGenerator.generateRandomUniqueString();
-            String downloadedFile = this.localPath + id;
             if (this.searchEngine.documentAlreadyExists(new DocumentSearchQuery(fileName, path))) {
                 throw new ServiceException(ServiceErrorType.DOCUMENT_ALREADY_EXISTS);
             }
@@ -132,9 +140,6 @@ public class IndexImpl implements Index {
             ParserData fileContents = this.parser.parseStringFromFile(downloadedFile);
             this.searchEngine.insert(new SearchEngineData(id, fileContents.getData(), path,
                     fileContents.getType(), fileName, url));
-            if (!new File(downloadedFile).delete()) {
-                logger.error("File not deleted!!!"); // Not an exception as a this can be logged to queue and be cleaned up asynchronously.
-            }
             return new IndexFromDriveResponse(indexDocumentDriveRequest.getPath(), url,
                     Messages.INDEX_FROM_DRIVE_SUCCESS.getMessage());
         } catch (ServiceException ex) {
@@ -143,6 +148,10 @@ public class IndexImpl implements Index {
         } catch (Exception ex) {
             logger.error("Exception while downloading the drive file : {}", indexDocumentDriveRequest.getPath(), ex);
             throw new ServiceException(ServiceErrorType.DOWNLOAD_FAILED);
+        } finally {
+            if (!new File(downloadedFile).delete()) {
+                logger.error("File not deleted!!!"); // Not an exception as a this can be logged to queue and be cleaned up asynchronously.
+            }
         }
     }
 
